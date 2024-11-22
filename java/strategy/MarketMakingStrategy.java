@@ -3,7 +3,7 @@ import exchange.Exchange;
 
 import java.util.ArrayList;
 
-class MarketMakingStrategy extends TradingStrategy {
+public class MarketMakingStrategy extends TradingStrategy {
     private double spread; // Spread for market making
     private Exchange exchange;
     private int maxOrderSize;

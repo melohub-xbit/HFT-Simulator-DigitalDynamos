@@ -1,5 +1,7 @@
 import exchange.Exchange;
 import exchange.OrderBook;
+import strategy.MarketMakingStrategy;
+import strategy.ArbitrageStrategy;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -19,7 +21,10 @@ public class HFTSimulation {
         //For the add orders we will define a new class(which will contain the random order generation or realistic order generation) and create a new thread for it
         //For the Match orders we will need construct a callable object which will call the matchorder method of the orderbook class and return executed trade with the profit/loss incurred by us
         
-        
+        //new instances of arbitrage strategy and market making strategy
+        ArbitrageStrategy arbitrageStrategy = new ArbitrageStrategy(e1, e2);
+        MarketMakingStrategy marketMakingStrategy = new MarketMakingStrategy(e1, 0.01, 100, 2.0);
+
     }
 
     public static void main(String[] args) {

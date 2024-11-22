@@ -1,7 +1,7 @@
 package strategy;
 import exchange.Exchange;
 
-class ArbitrageStrategy extends TradingStrategy {
+public class ArbitrageStrategy extends TradingStrategy {
     private Exchange exchange1;
     private Exchange exchange2;
     // to simulate transaction cost that exchange charges for trade
@@ -44,5 +44,4 @@ class ArbitrageStrategy extends TradingStrategy {
             exchange2.getOrderBook().matchSellOrder(generateOrderId(),"sell",bestBid2, tradeSize);
         }
     }
-
 }
