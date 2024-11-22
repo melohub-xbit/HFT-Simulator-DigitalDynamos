@@ -83,8 +83,8 @@ class MarketMakingStrategy extends TradingStrategy {
             // Order o1 = new Order("buy", bidPrice, orderSize);
             // Order o2 = new Order("sell", askPrice, orderSize);
             
-            exchange.addOrder("1","buy",bidPrice,orderSize); // place buy order
-            exchange.addOrder("1","sell",askPrice,orderSize); // place sell order
+            exchange.getOrderBook().matchBuyOrder(generateOrderId(),"buy",bidPrice,orderSize); // place buy order
+            exchange.getOrderBook().matchSellOrder(generateOrderId(),"sell",askPrice,orderSize); // place sell order
         }
     }
 

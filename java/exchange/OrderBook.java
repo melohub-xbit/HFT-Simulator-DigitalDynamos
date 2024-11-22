@@ -19,8 +19,8 @@ public class OrderBook {
     //lowest ask
     public native double getBestAsk();
     
-    public native String[][] matchBuyOrder();
-    public native String[][] matchSellOrder();
+    public native String[][] matchBuyOrder(String orderID, String type, double price, int quantity);
+    public native String[][] matchSellOrder(String orderID, String type, double price, int quantity);
 }
 
 

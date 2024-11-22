@@ -1,6 +1,6 @@
 package exchange;
 
-import java.util.ArrayList;
+import java.util.*;
 
 public class Exchange {
     private ArrayList<Double> priceHistory;
