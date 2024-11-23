@@ -2,7 +2,7 @@
 #define ORDERBOOK_H
 
 #include <string>
-#include <bits/stdc++.h>
+#include <vector>
 #include "AVLTree.h"
 
 using namespace std;
@@ -38,10 +38,10 @@ public:
     //matching engine must run everytime an order is added to the orderbook
 
     //match for buy orders
-    vector<vector<string>> matchBuyOrder(string orderID, string type, double price, int quantity);
+    vector<vector<string> > matchBuyOrder(string orderID, string type, double price, int quantity);
 
     //match for sell orders
-    vector<vector<string>> matchSellOrder(string orderID, string type, double price, int quantity);
+    vector<vector<string> > matchSellOrder(string orderID, string type, double price, int quantity);
 };
 
 #endif 

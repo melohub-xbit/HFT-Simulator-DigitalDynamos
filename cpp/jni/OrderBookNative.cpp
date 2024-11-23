@@ -1,5 +1,5 @@
 #include <jni.h>
-#include "OrderBook.h"  
+#include "../core/OrderBook.h"  // C++ header
 #include "OrderBookNative.h"  // jni header
 #include <string>
 #include <unordered_map>
@@ -13,7 +13,7 @@ OrderBook* getOrderBookInstance(jlong handle) {
     return orderBookInstances[handle];
 }
 
-JNIEXPORT void JNICALL Java_exchange_OrderBook_createOrderBook(JNIEnv* env, jobject obj) {
+extern "C" JNIEXPORT void JNICALL Java_exchange_OrderBook_createOrderBook(JNIEnv* env, jobject obj) {
     OrderBook* orderBook = new OrderBook();
     jlong handle = globalId++;
     orderBookInstances[handle] = orderBook;
@@ -23,7 +23,7 @@ JNIEXPORT void JNICALL Java_exchange_OrderBook_createOrderBook(JNIEnv* env, jobj
     env->SetLongField(obj, nativeHandleField, handle);
 }
 
-JNIEXPORT void JNICALL Java_exchange_OrderBook_destroyOrderBook(JNIEnv* env, jobject obj) {
+extern "C" JNIEXPORT void JNICALL Java_exchange_OrderBook_destroyOrderBook(JNIEnv* env, jobject obj) {
     jclass clazz = env->GetObjectClass(obj);
     jfieldID nativeHandleField = env->GetFieldID(clazz, "nativeHandle", "J");
     jlong handle = env->GetLongField(obj, nativeHandleField);
@@ -33,7 +33,7 @@ JNIEXPORT void JNICALL Java_exchange_OrderBook_destroyOrderBook(JNIEnv* env, job
     orderBookInstances.erase(handle);
 }
 
-JNIEXPORT void JNICALL Java_exchange_OrderBook_addOrder(JNIEnv* env, jobject obj, jstring orderID, jstring type, jdouble price, jint quantity) {
+extern "C" JNIEXPORT void JNICALL Java_exchange_OrderBook_addOrder(JNIEnv* env, jobject obj, jstring orderID, jstring type, jdouble price, jint quantity) {
     jclass clazz = env->GetObjectClass(obj);
     jfieldID nativeHandleField = env->GetFieldID(clazz, "nativeHandle", "J");
     jlong handle = env->GetLongField(obj, nativeHandleField);
@@ -48,7 +48,7 @@ JNIEXPORT void JNICALL Java_exchange_OrderBook_addOrder(JNIEnv* env, jobject obj
     env->ReleaseStringUTFChars(type, t);
 }
 
-JNIEXPORT void JNICALL Java_exchange_OrderBook_cancelOrder(JNIEnv* env, jobject obj, jstring orderID) {
+extern "C" JNIEXPORT void JNICALL Java_exchange_OrderBook_cancelOrder(JNIEnv* env, jobject obj, jstring orderID) {
     jclass clazz = env->GetObjectClass(obj);
     jfieldID nativeHandleField = env->GetFieldID(clazz, "nativeHandle", "J");
     jlong handle = env->GetLongField(obj, nativeHandleField);
@@ -61,7 +61,7 @@ JNIEXPORT void JNICALL Java_exchange_OrderBook_cancelOrder(JNIEnv* env, jobject 
     env->ReleaseStringUTFChars(orderID, id);
 }
 
-JNIEXPORT jdouble JNICALL Java_exchange_OrderBook_getBestBid(JNIEnv* env, jobject obj) {
+extern "C" JNIEXPORT jdouble JNICALL Java_exchange_OrderBook_getBestBid(JNIEnv* env, jobject obj) {
     jclass clazz = env->GetObjectClass(obj);
     jfieldID nativeHandleField = env->GetFieldID(clazz, "nativeHandle", "J");
     jlong handle = env->GetLongField(obj, nativeHandleField);
@@ -70,7 +70,7 @@ JNIEXPORT jdouble JNICALL Java_exchange_OrderBook_getBestBid(JNIEnv* env, jobjec
     return orderBook->getBestBid();
 }
 
-JNIEXPORT jdouble JNICALL Java_exchange_OrderBook_getBestAsk(JNIEnv* env, jobject obj) {
+extern "C" JNIEXPORT jdouble JNICALL Java_exchange_OrderBook_getBestAsk(JNIEnv* env, jobject obj) {
     jclass clazz = env->GetObjectClass(obj);
     jfieldID nativeHandleField = env->GetFieldID(clazz, "nativeHandle", "J");
     jlong handle = env->GetLongField(obj, nativeHandleField);
@@ -80,7 +80,7 @@ JNIEXPORT jdouble JNICALL Java_exchange_OrderBook_getBestAsk(JNIEnv* env, jobjec
 }
 
 
-JNIEXPORT jobjectArray JNICALL Java_exchange_OrderBook_matchBuyOrder(JNIEnv* env, jobject obj, jstring orderID, jstring type, jdouble price, jint quantity) {
+extern "C" JNIEXPORT jobjectArray JNICALL Java_exchange_OrderBook_matchBuyOrder(JNIEnv* env, jobject obj, jstring orderID, jstring type, jdouble price, jint quantity) {
     jclass clazz = env->GetObjectClass(obj);
     jfieldID nativeHandleField = env->GetFieldID(clazz, "nativeHandle", "J");
     jlong handle = env->GetLongField(obj, nativeHandleField);
@@ -91,7 +91,7 @@ JNIEXPORT jobjectArray JNICALL Java_exchange_OrderBook_matchBuyOrder(JNIEnv* env
     OrderBook* orderBook = getOrderBookInstance(handle);
 
     // Call the native method
-    std::vector<std::vector<std::string>> results = orderBook->matchBuyOrder(std::string(id), std::string(t), price, quantity);
+    std::vector<std::vector<std::string> > results = orderBook->matchBuyOrder(std::string(id), std::string(t), price, quantity);
 
     // Prepare a 2D Java string array
     jclass stringClass = env->FindClass("java/lang/String");
@@ -112,7 +112,7 @@ JNIEXPORT jobjectArray JNICALL Java_exchange_OrderBook_matchBuyOrder(JNIEnv* env
     return outerArray;
 }
 
-JNIEXPORT jobjectArray JNICALL Java_exchange_OrderBook_matchSellOrder(JNIEnv* env, jobject obj, jstring orderID, jstring type, jdouble price, jint quantity) {
+extern "C" JNIEXPORT jobjectArray JNICALL Java_exchange_OrderBook_matchSellOrder(JNIEnv* env, jobject obj, jstring orderID, jstring type, jdouble price, jint quantity) {
     jclass clazz = env->GetObjectClass(obj);
     jfieldID nativeHandleField = env->GetFieldID(clazz, "nativeHandle", "J");
     jlong handle = env->GetLongField(obj, nativeHandleField);
@@ -123,7 +123,7 @@ JNIEXPORT jobjectArray JNICALL Java_exchange_OrderBook_matchSellOrder(JNIEnv* en
     OrderBook* orderBook = getOrderBookInstance(handle);
 
     // Call the native method
-    std::vector<std::vector<std::string>> results = orderBook->matchSellOrder(std::string(id), std::string(t), price, quantity);
+    std::vector<std::vector<std::string> > results = orderBook->matchSellOrder(std::string(id), std::string(t), price, quantity);
 
     // Prepare a 2D Java string array
     jclass stringClass = env->FindClass("java/lang/String");

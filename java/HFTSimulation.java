@@ -22,19 +22,20 @@ public class HFTSimulation {
 
         System.out.println("Starting HFT Simulation");
         
-        ExecutorService executor = Executors.newFixedThreadPool(3);
-
-        RandomOrderGeneration addOrdersE1 = new RandomOrderGeneration(hft.e1.getOrderBook(), hft.e1);
-        RandomOrderGeneration addOrdersE2 = new RandomOrderGeneration(hft.e2.getOrderBook(), hft.e2);
-
-
-        MarketMakingStrategy mms = new MarketMakingStrategy(hft.e1, 10, 0.01);
+        // ExecutorService executor = Executors.newFixedThreadPool(3);
         
-        executor.submit(addOrdersE1);
-        executor.submit(addOrdersE2);
-        executor.submit(mms);
+        RandomOrderGeneration addOrdersE1 = new RandomOrderGeneration(hft.e1);
+        addOrdersE1.run();
+        // RandomOrderGeneration addOrdersE2 = new RandomOrderGeneration(hft.e2.getOrderBook(), hft.e2);
 
-        executor.shutdown();
+
+        // MarketMakingStrategy mms = new MarketMakingStrategy(hft.e1, 10, 0.01);
+        
+        // executor.submit(addOrdersE1);
+        // executor.submit(addOrdersE2);
+        // executor.submit(mms);
+
+        // executor.shutdown();
 
         System.out.println("All tasks completed");
         

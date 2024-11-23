@@ -34,11 +34,11 @@ void OrderBook::cancelOrder(string orderID) {
     buyOrders.remove(buyOrders.findNodeEnabler(dummyOrder)->order);
 }
 
-vector<vector<string>> OrderBook::matchBuyOrder(string orderID, string type, double price, int quantity) {
+vector<vector<string> > OrderBook::matchBuyOrder(string orderID, string type, double price, int quantity) {
     // Implementation for matching buy orders
 
     Order* buyOrder = new Order(orderID, type, price, quantity);
-    vector<vector<string>> matchedOrders;
+    vector<vector<string> > matchedOrders;
 
     //find min price among the sell orders
     Order* minNode = &(sellOrders.findMin()->order);
@@ -92,18 +92,18 @@ vector<vector<string>> OrderBook::matchBuyOrder(string orderID, string type, dou
     return matchedOrders;
 }
 
-vector<vector<string>> OrderBook::matchSellOrder(string orderID, string type, double price, int quantity) {
+vector<vector<string> > OrderBook::matchSellOrder(string orderID, string type, double price, int quantity) {
     // Implementation for matching sell orders
 
     //for sell order, all the buy orders with price equal to or more than the sell order (price-wise, it's the inorder successor of this price in buy orders)
 
     Order* sellOrder = new Order(orderID, type, price, quantity);
     
-    vector<vector<string>> matchedOrders;
+    vector<vector<string> > matchedOrders;
     //find the min price of buy orders >= sell order's price
     Order* minNode = &(buyOrders.findJustGreater(*sellOrder)->order);
 
-    if ((minNode == NULL)) {
+    if (minNode == NULL) {
         //if no buy order with price >= sell order's price, then return
         if (sellOrder->getQuantity() > 0) {
             sellOrders.insert(*sellOrder);

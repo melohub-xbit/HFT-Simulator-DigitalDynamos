@@ -29,8 +29,8 @@ private:
 public:
     AVLTree(); // Constructor
 
-    void insert(const Order& order);
-    void remove(const Order& order);
+    void insert(Order order);
+    void remove(Order order);
     void display() const;
     Node* findMin() const;
     Node* findNode(Order dummyOrder,Node* root);

@@ -1,6 +1,8 @@
 #include "AVLTree.h"
 #include <iostream>
 #include <algorithm>
+#include "Order.h"
+using namespace std;
 
 //Node constructor
 Node::Node(const Order& order) : order(order), left(nullptr), right(nullptr), height(1) {}
@@ -135,12 +137,13 @@ Node* AVLTree::inorderProcessor(Node* node) {
 }
 
 //Public insert method
-void AVLTree::insert(const Order& order) {
+void AVLTree::insert(Order order) {
+    cout<<"Adding the Order in the tree..."<<endl;
     root = insertNode(root, order);
 }
 
 //Public remove method
-void AVLTree::remove(const Order& order) {
+void AVLTree::remove(Order order) {
     root = deleteNode(root, order);
 }
 
@@ -203,5 +206,6 @@ Node* AVLTree::findJustGreater(Order refOrder) {
             current = current->right;
         }
     }
+    return nullptr;
 }
 

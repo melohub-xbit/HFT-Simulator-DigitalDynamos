@@ -1,15 +1,13 @@
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
-import exchange.OrderBook;
 import exchange.Exchange;
 
-public class RandomOrderGeneration implements Runnable{
+public class RandomOrderGeneration {
 
-    private OrderBook orderBook;
     private Exchange exchange;
 
-    public RandomOrderGeneration(OrderBook orderbook, Exchange exchange){
-        this.orderBook = orderbook;
+    public RandomOrderGeneration(Exchange exchange){
+        
         this.exchange = exchange;
     }
 

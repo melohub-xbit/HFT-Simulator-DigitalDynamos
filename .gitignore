@@ -1,1 +1,5 @@
 **/.vscode/
+*.log
+*.dylib
+*.class
+*.DS_Store
