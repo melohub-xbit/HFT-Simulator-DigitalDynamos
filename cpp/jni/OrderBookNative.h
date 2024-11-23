@@ -58,18 +58,18 @@ JNIEXPORT jdouble JNICALL Java_exchange_OrderBook_getBestAsk
 /*
  * Class:     exchange_OrderBook
  * Method:    matchBuyOrder
- * Signature: ()[[Ljava/lang/String;
+ * Signature: (Ljava/lang/String;Ljava/lang/String;DI)[[Ljava/lang/String;
  */
 JNIEXPORT jobjectArray JNICALL Java_exchange_OrderBook_matchBuyOrder
-  (JNIEnv *, jobject);
+  (JNIEnv *, jobject, jstring, jstring, jdouble, jint);
 
 /*
  * Class:     exchange_OrderBook
  * Method:    matchSellOrder
- * Signature: ()[[Ljava/lang/String;
+ * Signature: (Ljava/lang/String;Ljava/lang/String;DI)[[Ljava/lang/String;
  */
 JNIEXPORT jobjectArray JNICALL Java_exchange_OrderBook_matchSellOrder
-  (JNIEnv *, jobject);
+  (JNIEnv *, jobject, jstring, jstring, jdouble, jint);
 
 #ifdef __cplusplus
 }
