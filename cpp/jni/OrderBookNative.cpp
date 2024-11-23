@@ -80,56 +80,66 @@ JNIEXPORT jdouble JNICALL Java_exchange_OrderBook_getBestAsk(JNIEnv* env, jobjec
 }
 
 
-JNIEXPORT jobjectArray JNICALL Java_exchange_OrderBook_matchBuyOrder(JNIEnv* env, jobject obj) {
+JNIEXPORT jobjectArray JNICALL Java_exchange_OrderBook_matchBuyOrder(JNIEnv* env, jobject obj, jstring orderID, jstring type, jdouble price, jint quantity) {
     jclass clazz = env->GetObjectClass(obj);
     jfieldID nativeHandleField = env->GetFieldID(clazz, "nativeHandle", "J");
     jlong handle = env->GetLongField(obj, nativeHandleField);
 
+    const char* id = env->GetStringUTFChars(orderID, nullptr);
+    const char* t = env->GetStringUTFChars(type, nullptr);
+
     OrderBook* orderBook = getOrderBookInstance(handle);
 
-    // Call the native matchBuyOrder function
-    Order buyOrder; // Initialize with the appropriate buy order details
-    std::vector<std::vector<std::string>> matches = orderBook->matchBuyOrder(&buyOrder);
+    // Call the native method
+    std::vector<std::vector<std::string>> results = orderBook->matchBuyOrder(std::string(id), std::string(t), price, quantity);
 
-    // Convert the result to a jobjectArray
+    // Prepare a 2D Java string array
     jclass stringClass = env->FindClass("java/lang/String");
-    jclass arrayClass = env->FindClass("[Ljava/lang/String;");
+    jobjectArray outerArray = env->NewObjectArray(results.size(), env->FindClass("[Ljava/lang/String;"), nullptr);
 
-    jobjectArray resultArray = env->NewObjectArray(matches.size(), arrayClass, nullptr);
-    for (size_t i = 0; i < matches.size(); i++) {
-        jobjectArray innerArray = env->NewObjectArray(matches[i].size(), stringClass, nullptr);
-        for (size_t j = 0; j < matches[i].size(); j++) {
-            env->SetObjectArrayElement(innerArray, j, env->NewStringUTF(matches[i][j].c_str()));
+    for (size_t i = 0; i < results.size(); ++i) {
+        jobjectArray innerArray = env->NewObjectArray(results[i].size(), stringClass, nullptr);
+        for (size_t j = 0; j < results[i].size(); ++j) {
+            jstring str = env->NewStringUTF(results[i][j].c_str());
+            env->SetObjectArrayElement(innerArray, j, str);
         }
-        env->SetObjectArrayElement(resultArray, i, innerArray);
+        env->SetObjectArrayElement(outerArray, i, innerArray);
     }
 
-    return resultArray;
+    env->ReleaseStringUTFChars(orderID, id);
+    env->ReleaseStringUTFChars(type, t);
+
+    return outerArray;
 }
 
-JNIEXPORT jobjectArray JNICALL Java_exchange_OrderBook_matchSellOrder(JNIEnv* env, jobject obj) {
+JNIEXPORT jobjectArray JNICALL Java_exchange_OrderBook_matchSellOrder(JNIEnv* env, jobject obj, jstring orderID, jstring type, jdouble price, jint quantity) {
     jclass clazz = env->GetObjectClass(obj);
     jfieldID nativeHandleField = env->GetFieldID(clazz, "nativeHandle", "J");
     jlong handle = env->GetLongField(obj, nativeHandleField);
 
+    const char* id = env->GetStringUTFChars(orderID, nullptr);
+    const char* t = env->GetStringUTFChars(type, nullptr);
+
     OrderBook* orderBook = getOrderBookInstance(handle);
 
-    // Call the native matchSellOrder function
-    Order sellOrder; // Initialize with the appropriate sell order details
-    std::vector<std::vector<std::string>> matches = orderBook->matchSellOrder(&sellOrder);
+    // Call the native method
+    std::vector<std::vector<std::string>> results = orderBook->matchSellOrder(std::string(id), std::string(t), price, quantity);
 
-    // Convert the result to a jobjectArray
+    // Prepare a 2D Java string array
     jclass stringClass = env->FindClass("java/lang/String");
-    jclass arrayClass = env->FindClass("[Ljava/lang/String;");
+    jobjectArray outerArray = env->NewObjectArray(results.size(), env->FindClass("[Ljava/lang/String;"), nullptr);
 
-    jobjectArray resultArray = env->NewObjectArray(matches.size(), arrayClass, nullptr);
-    for (size_t i = 0; i < matches.size(); i++) {
-        jobjectArray innerArray = env->NewObjectArray(matches[i].size(), stringClass, nullptr);
-        for (size_t j = 0; j < matches[i].size(); j++) {
-            env->SetObjectArrayElement(innerArray, j, env->NewStringUTF(matches[i][j].c_str()));
+    for (size_t i = 0; i < results.size(); ++i) {
+        jobjectArray innerArray = env->NewObjectArray(results[i].size(), stringClass, nullptr);
+        for (size_t j = 0; j < results[i].size(); ++j) {
+            jstring str = env->NewStringUTF(results[i][j].c_str());
+            env->SetObjectArrayElement(innerArray, j, str);
         }
-        env->SetObjectArrayElement(resultArray, i, innerArray);
+        env->SetObjectArrayElement(outerArray, i, innerArray);
     }
 
-    return resultArray;
+    env->ReleaseStringUTFChars(orderID, id);
+    env->ReleaseStringUTFChars(type, t);
+
+    return outerArray;
 }

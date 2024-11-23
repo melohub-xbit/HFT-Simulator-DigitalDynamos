@@ -38,10 +38,10 @@ public:
     //matching engine must run everytime an order is added to the orderbook
 
     //match for buy orders
-    vector<vector<string>> matchBuyOrder(Order* buyOrder);
+    vector<vector<string>> matchBuyOrder(string orderID, string type, double price, int quantity);
 
     //match for sell orders
-    vector<vector<string>> matchSellOrder(Order* sellOrder);
+    vector<vector<string>> matchSellOrder(string orderID, string type, double price, int quantity);
 };
 
 #endif 
