@@ -19,14 +19,14 @@ class Order {
         Order(string id, string type, double price, int quantity);
 
         // Method to display order details
-        void displayOrder() const;
+        void displayOrder() ;
 
         //getter methods
-        string getId() const;
-        string getType() const;
-        double getPrice() const;
-        int getQuantity() const;
-        // time_t getDateTime() const;
+        string getId() ;
+        string getType() ;
+        double getPrice() ;
+        int getQuantity() ;
+        // time_t getDateTime() ;
 
         void setQuantity(int quantity);
         string toString();

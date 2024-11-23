@@ -8,23 +8,23 @@ Order::Order(string id, string type, double price, int quantity)
     : id(id), type(type), price(price), quantity(quantity) {}
 
 // Getter methods
-string Order::getId() const {
+string Order::getId()  {
     return id;
 }
 
-string Order::getType() const {
+string Order::getType()  {
     return type;
 }
 
-double Order::getPrice() const {
+double Order::getPrice()  {
     return price;
 }
 
-int Order::getQuantity() const {
+int Order::getQuantity()  {
     return quantity;
 }
 
-// time_t Order::getDateTime() const {
+// time_t Order::getDateTime()  {
 //     return dateTime;
 // }
 
@@ -33,7 +33,7 @@ void Order::setQuantity(int quantity) {
 }
 
 // Method to display order details
-void Order::displayOrder() const {
+void Order::displayOrder()  {
     cout << "Order ID: " << id << "\n"
          << "Type: " << type << "\n"
          << "Price: $" << price << "\n"

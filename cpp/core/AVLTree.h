@@ -3,39 +3,39 @@
 
 #include "Order.h"
 
-class Node {
-public:
-    Order order;
-    Node* left;
-    Node* right;
-    int height;
-
-    Node(const Order& order); // Constructor
-};
-
 class AVLTree {
-private:
-    Node* root;
+    private:
+        Order* order;
+        AVLTree* left;
+        AVLTree* right;
+        int height;
 
-    int height(Node* n);
-    int getBalance(Node* n);
-    Node* rightRotate(Node* y);
-    Node* leftRotate(Node* x);
-    Node* insertNode(Node* node, const Order& order);
-    Node* deleteNode(Node* root, const Order& order);
-    Node* inorderProcessor(Node* node);
-    void display(Node* node) const;
+    public:
+        AVLTree( Order* order){
+            this->order=order;
+        }
 
-public:
-    AVLTree(); // Constructor
+        //Getter methods
+        Order* getOrder() ;
+        AVLTree* getLeft() ;
+        AVLTree* getRight() ;
+        int getHeight() ;
 
-    void insert(Order order);
-    void remove(Order order);
-    void display() const;
-    Node* findMin() const;
-    Node* findNode(Order dummyOrder,Node* root);
-    Node* findNodeEnabler(Order dummyOrder);
-    Node* findJustGreater(Order refOrder);
+        void set_height(AVLTree* n);
+        int get_balance(AVLTree* n);
+        AVLTree* right_rotate(AVLTree* z);
+        AVLTree* left_rotate(AVLTree* z);
+        AVLTree* left_right_rotate(AVLTree* z);
+        AVLTree* right_left_rotate(AVLTree* z);
+        AVLTree* insert_AVLTree(AVLTree* n, Order* o);
+        AVLTree* delete_AVLTree(AVLTree* n, Order* o);
+
+        AVLTree* findMin() ;
+        AVLTree* findAVLTree(Order dummyOrder,AVLTree* root);
+        AVLTree* findAVLTreeEnabler(Order dummyOrder);
+        AVLTree* findJustGreater(Order refOrder);
+
 };
+
 
 #endif // AVLTREE_H
