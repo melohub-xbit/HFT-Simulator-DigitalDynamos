@@ -3,15 +3,13 @@ import exchange.Exchange;
 
 import java.util.ArrayList;
 
-public class MarketMakingStrategy extends TradingStrategy {
-    private double spread; // Spread for market making
+public class MarketMakingStrategy implements Runnable {
     private Exchange exchange;
     private int maxOrderSize;
     private double spreadFactor;
 
-    public MarketMakingStrategy(Exchange exchange, double spread, int maxOrderSize, double spreadFactor) {
+    public MarketMakingStrategy(Exchange exchange, int maxOrderSize, double spreadFactor) {
         this.exchange = exchange;
-        this.spread = spread;
         this.maxOrderSize = maxOrderSize;
         this.spreadFactor = spreadFactor;
     }
@@ -62,12 +60,9 @@ public class MarketMakingStrategy extends TradingStrategy {
         return Math.sqrt(squaredReturnEMA);
     }
 
-    public double getSpread() {
-        return spread;
-    }
 
     @Override
-    public void execute() {
+    public void run() {
         // Order Size is dynamically calculated as follows: Max Order Size/Volatility
         ArrayList<Double> priceHistory = exchange.getPriceHistory(); // get the recent prices
         double volatility = calculateVolatility(priceHistory); // get volatility
@@ -83,8 +78,11 @@ public class MarketMakingStrategy extends TradingStrategy {
             // Order o1 = new Order("buy", bidPrice, orderSize);
             // Order o2 = new Order("sell", askPrice, orderSize);
             
-            exchange.getOrderBook().matchBuyOrder(generateOrderId(),"buy",bidPrice,orderSize); // place buy order
-            exchange.getOrderBook().matchSellOrder(generateOrderId(),"sell",askPrice,orderSize); // place sell order
+            exchange.getOrderBook().matchBuyOrder(exchange.getHFTId(),"buy",bidPrice,orderSize); // place buy order
+            
+            exchange.getOrderBook().matchSellOrder(exchange.getHFTId(),"sell",askPrice,orderSize); // place sell order
+
+            System.out.println("Placed orders: Buy at " + bidPrice + ", Sell at " + askPrice);
         }
     }
 

@@ -6,10 +6,16 @@ public class Exchange {
     private ArrayList<Double> priceHistory;
     private OrderBook orderBook; // since we're simulating an exchange with only one stock, we'll use a single OrderBook
 
+    private static int hft_id = 1 ;
 
     public Exchange() {
         priceHistory = new ArrayList<>();
         orderBook = new OrderBook();
+    }
+
+    //Getter Methods
+    public String getHFTId(){
+        return "hftId" + hft_id++;
     }
 
     public ArrayList<Double> getPriceHistory() {

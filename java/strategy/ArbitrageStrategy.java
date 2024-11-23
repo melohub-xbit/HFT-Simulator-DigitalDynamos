@@ -1,7 +1,7 @@
 package strategy;
 import exchange.Exchange;
 
-public class ArbitrageStrategy extends TradingStrategy {
+public class ArbitrageStrategy implements Runnable {
     private Exchange exchange1;
     private Exchange exchange2;
     // to simulate transaction cost that exchange charges for trade
@@ -15,9 +15,9 @@ public class ArbitrageStrategy extends TradingStrategy {
         this.transactionCost = transactionCost;
         this.tradeSize = tradeSize;
     }
-
+    
     @Override
-    public void execute() {
+    public void run() {
         double bestBid1 = exchange1.getBestBid();
         double bestBid2 = exchange2.getBestBid();
 
@@ -39,9 +39,9 @@ public class ArbitrageStrategy extends TradingStrategy {
             double predictedProfit = bestBid2 - bestAsk1 + transactionCost;
 
             // Order buyAt1 = new Order("buy",bestAsk1, tradeSize);
-            exchange1.getOrderBook().matchBuyOrder(generateOrderId(),"buy",bestAsk1, tradeSize);
+            exchange1.getOrderBook().matchBuyOrder(exchange1.getHFTId(),"buy",bestAsk1, tradeSize);
             // Order sellAt2 = new Order("sell",bestBid2, tradeSize);
-            exchange2.getOrderBook().matchSellOrder(generateOrderId(),"sell",bestBid2, tradeSize);
+            exchange2.getOrderBook().matchSellOrder(exchange2.getHFTId(),"sell",bestBid2, tradeSize);
         }
     }
 }
