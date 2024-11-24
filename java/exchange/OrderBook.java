@@ -5,7 +5,7 @@ public class OrderBook {
     static {
         System.loadLibrary("OrderBookNative"); // Load the native library
     }
-
+    
     // Pointer to native C++ exchange.OrderBook instance
     private long nativeHandle;
 

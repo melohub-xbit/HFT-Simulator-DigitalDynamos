@@ -1,16 +1,17 @@
 #include "OrderBook.h"
+#include <iostream>
 using namespace std;
 
 AVLTree* OrderBook::getBuyOrders() {
-    return &buyOrders;
+    return buyOrders;
 }
 
 AVLTree* OrderBook::getSellOrders() {
-    return &sellOrders;
+    return sellOrders;
 }
 
 double OrderBook::getBestBid() {
-    // return buyOrders.findMax()->order.getPrice();
+    // return buyOrders->findMax()->order.getPrice();
     return 0.32;
 }
 
@@ -21,17 +22,18 @@ double OrderBook::getBestAsk() {
 
 void OrderBook::addOrder(string orderID, string type, double price, int quantity) {
     Order newOrder = Order(orderID, type, price, quantity);
-
+    cout<<type<<endl;
     if (type == "buy") {
-        buyOrders.insert(newOrder);
+        buyOrders = buyOrders->insert_AVLTree(buyOrders,&newOrder);
     } else if (type == "sell") {
-        sellOrders.insert(newOrder);
+        sellOrders = sellOrders->insert_AVLTree(sellOrders,&newOrder);
     }
 }
 
 void OrderBook::cancelOrder(string orderID) {
     Order dummyOrder = Order(orderID, "", 0, 0);
-    buyOrders.remove(buyOrders.findNodeEnabler(dummyOrder)->order);
+    buyOrders = buyOrders->delete_AVLTree(buyOrders,&dummyOrder);
+    // buyOrders->delete_AVLTree(buyOrders->findAVLTreeEnabler(dummyOrder)->order);
 }
 
 vector<vector<string> > OrderBook::matchBuyOrder(string orderID, string type, double price, int quantity) {
@@ -41,13 +43,13 @@ vector<vector<string> > OrderBook::matchBuyOrder(string orderID, string type, do
     vector<vector<string> > matchedOrders;
 
     //find min price among the sell orders
-    Order* minNode = &(sellOrders.findMin()->order);
+    Order* minNode = sellOrders->findMin(sellOrders)->getOrder();
 
     //if min price is more than buy order, then return
     if ((minNode != NULL && minNode->getPrice() > buyOrder->getPrice()) || minNode == NULL) {
         //buy order is not matched, so add to the buy order book
         if (buyOrder->getQuantity() > 0) {
-            buyOrders.insert(*buyOrder);
+            buyOrders = buyOrders->insert_AVLTree(buyOrders,buyOrder);
         }
         return matchedOrders;
     }
@@ -63,7 +65,7 @@ vector<vector<string> > OrderBook::matchBuyOrder(string orderID, string type, do
             
             minNode->setQuantity(minNode->getQuantity() - buyOrder->getQuantity());
             if (minNode->getQuantity() == 0) {
-                sellOrders.remove(*minNode);
+                sellOrders = sellOrders->delete_AVLTree(sellOrders,minNode);
             }
             //if this is the case, no need to do anything else with the buy order, the trade is executed
             //Sell order details are added to a vector
@@ -78,15 +80,15 @@ vector<vector<string> > OrderBook::matchBuyOrder(string orderID, string type, do
             matchedOrders.push_back(temp);
 
             buyOrder->setQuantity(buyOrder->getQuantity() - minNode->getQuantity());
-            sellOrders.remove(*minNode);
+            sellOrders = sellOrders->delete_AVLTree(sellOrders,minNode);
 
-            minNode = &(sellOrders.findMin()->order);
+            minNode = sellOrders->findMin(sellOrders)->getOrder();
         }
     }
 
     if (buyOrder->getQuantity() > 0) {
         //if the buy order quantity is still greater than 0, add the order to the order book
-        buyOrders.insert(*buyOrder);
+        buyOrders = buyOrders->insert_AVLTree(buyOrders,buyOrder);
     }
 
     return matchedOrders;
@@ -101,12 +103,12 @@ vector<vector<string> > OrderBook::matchSellOrder(string orderID, string type, d
     
     vector<vector<string> > matchedOrders;
     //find the min price of buy orders >= sell order's price
-    Order* minNode = &(buyOrders.findJustGreater(*sellOrder)->order);
+    Order* minNode = buyOrders->findJustGreater(*sellOrder, buyOrders)->getOrder();
 
     if (minNode == NULL) {
         //if no buy order with price >= sell order's price, then return
         if (sellOrder->getQuantity() > 0) {
-            sellOrders.insert(*sellOrder);
+            sellOrders = sellOrders->insert_AVLTree(buyOrders,sellOrder);
         }
         return matchedOrders;
     }
@@ -121,7 +123,7 @@ vector<vector<string> > OrderBook::matchSellOrder(string orderID, string type, d
 
             minNode->setQuantity(minNode->getQuantity() - sellOrder->getQuantity());
             if (minNode->getQuantity() == 0) {
-                buyOrders.remove(*minNode);
+                sellOrders = sellOrders->delete_AVLTree(sellOrders,minNode);
             }
             //if this is the case, no need to do anything else with the sell order, the trade is executed
             return matchedOrders;
@@ -134,14 +136,15 @@ vector<vector<string> > OrderBook::matchSellOrder(string orderID, string type, d
             matchedOrders.push_back(temp);
 
             sellOrder->setQuantity(sellOrder->getQuantity() - minNode->getQuantity());
-            buyOrders.remove(*minNode);
-            minNode = &(buyOrders.findJustGreater(*sellOrder)->order);
+            buyOrders = buyOrders->delete_AVLTree(sellOrders,minNode);
+            minNode = buyOrders->findJustGreater(*sellOrder, buyOrders)->getOrder();
         }
     }
 
     if (sellOrder->getQuantity() > 0) {
         //if the sell order quantity is still greater than 0, add the order to the order book
-        sellOrders.insert(*sellOrder);
+        sellOrders = sellOrders->insert_AVLTree(buyOrders,sellOrder);
+        
     }
 
     return matchedOrders;

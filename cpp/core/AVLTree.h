@@ -11,8 +11,18 @@ class AVLTree {
         int height;
 
     public:
+        AVLTree(){
+            this->order=nullptr;
+            this->left=nullptr;
+            this->right=nullptr;
+            this->height=0;
+        };
+        
         AVLTree( Order* order){
             this->order=order;
+            this->left=nullptr;
+            this->right=nullptr;
+            this->height=0;
         }
 
         //Getter methods
@@ -29,11 +39,11 @@ class AVLTree {
         AVLTree* right_left_rotate(AVLTree* z);
         AVLTree* insert_AVLTree(AVLTree* n, Order* o);
         AVLTree* delete_AVLTree(AVLTree* n, Order* o);
-
-        AVLTree* findMin() ;
+        AVLTree* inorder_processor(AVLTree* n);
+        AVLTree* findMin(AVLTree* root) ;
         AVLTree* findAVLTree(Order dummyOrder,AVLTree* root);
-        AVLTree* findAVLTreeEnabler(Order dummyOrder);
-        AVLTree* findJustGreater(Order refOrder);
+        AVLTree* findAVLTreeEnabler(Order dummyOrder, AVLTree* root);
+        AVLTree* findJustGreater(Order refOrder, AVLTree* root);
 
 };
 

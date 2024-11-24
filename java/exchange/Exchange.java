@@ -11,6 +11,7 @@ public class Exchange {
     public Exchange() {
         priceHistory = new ArrayList<>();
         orderBook = new OrderBook();
+        orderBook.createOrderBook();
     }
 
     //Getter Methods

@@ -24,9 +24,7 @@ int Order::getQuantity()  {
     return quantity;
 }
 
-// time_t Order::getDateTime()  {
-//     return dateTime;
-// }
+
 
 void Order::setQuantity(int quantity) {
     this->quantity = quantity;
@@ -38,7 +36,6 @@ void Order::displayOrder()  {
          << "Type: " << type << "\n"
          << "Price: $" << price << "\n"
          << "Quantity: " << quantity << "\n";
-        //  << "Date & Time: " << ctime(&dateTime) << endl;
 }
 
 string Order::toString() {

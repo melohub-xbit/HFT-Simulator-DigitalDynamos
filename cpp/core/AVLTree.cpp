@@ -35,6 +35,9 @@ void AVLTree::set_height(AVLTree* n) {
 
 int AVLTree::get_balance(AVLTree* n) {
     if (n == nullptr) return 0;
+    else if(n->left==nullptr && n->right==nullptr) return 0;
+    else if(n->left==nullptr && n->right!=nullptr) return -n->right->height;
+    else if(n->right==nullptr && n->left!=nullptr) return n->left->height;
     else return (n->left->height - n->right->height);
 }
 
@@ -77,40 +80,55 @@ AVLTree* AVLTree::inorder_processor(AVLTree* n) {
     return current;
 }
 
+
 AVLTree* AVLTree::insert_AVLTree(AVLTree* n, Order* o) {
     if(n == nullptr) {
         return new AVLTree(o);
     }
+    
+    if(n->order == nullptr) {
+        cout<<"1"<<endl;
+        return new AVLTree(o);
+    }
+    
     if (o->getPrice() <= n->order->getPrice()) {
+        cout<<"2"<<endl;
         n->left = insert_AVLTree(n->left, o);
     } 
     else if(o->getPrice() > n->order->getPrice()) {
+        cout<<"3"<<endl;
         n->right = insert_AVLTree(n->right, o);
     }
     else return (n);
-
+    cout<<"4"<<endl;
     set_height(n);
-
+    cout<<"5"<<endl;
     int balance = get_balance(n);
-
+    cout<<"6"<<endl;
     if(balance>1){
+        cout<<"7"<<endl;
         if(o->getPrice() < n->left->order->getPrice()){
+            cout<<"8"<<endl;
             return right_rotate(n);
         }
         else{
+            cout<<"9"<<endl;
             return left_right_rotate(n);
         }
     }
-
+    cout<<"9.5"<<endl;
     if(balance<-1){
+        cout<<"10"<<endl;
         if(o->getPrice() > n->right->order->getPrice()){
+            cout<<"11"<<endl;
             return left_rotate(n);
         }
         else{
+            cout<<"12"<<endl;
             return right_left_rotate(n);
         }
     }
-
+    cout<<"13"<<endl;
     return n;
 
 }
@@ -170,7 +188,7 @@ AVLTree* AVLTree::delete_AVLTree(AVLTree* root, Order* o) {
     return root;
 }
 
-AVLTree* AVLTree::findMin()  {
+AVLTree* AVLTree::findMin(AVLTree* root)  {
     AVLTree* current = root;
     while (current && current->left)
         current = current->left;
@@ -195,13 +213,13 @@ AVLTree* AVLTree::findAVLTree(Order dummyOrder,AVLTree* root) {
     return nullptr;
 }
 
-AVLTree* AVLTree::findAVLTreeEnabler(Order dummyOrder) {
+AVLTree* AVLTree::findAVLTreeEnabler(Order dummyOrder, AVLTree* root) {
     AVLTree* current = root;
     return findAVLTree(dummyOrder,current);
     
 }
 
-AVLTree* AVLTree::findJustGreater(Order refOrder) {
+AVLTree* AVLTree::findJustGreater(Order refOrder, AVLTree* root) {
     AVLTree* current = root;
     while (current) {
         if (current->order->getPrice() >= refOrder.getPrice()) {

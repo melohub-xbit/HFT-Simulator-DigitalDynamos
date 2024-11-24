@@ -12,7 +12,6 @@ class Order {
         string type;
         double price;
         int quantity;
-        // time_t dateTime;
 
     public:
         // Constructor
@@ -26,7 +25,6 @@ class Order {
         string getType() ;
         double getPrice() ;
         int getQuantity() ;
-        // time_t getDateTime() ;
 
         void setQuantity(int quantity);
         string toString();

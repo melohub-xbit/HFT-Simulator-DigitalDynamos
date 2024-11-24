@@ -9,11 +9,16 @@ using namespace std;
 
 class OrderBook {
 private:
-    AVLTree buyOrders;  
-    AVLTree sellOrders; 
+    AVLTree* buyOrders;  
+    AVLTree* sellOrders; 
 
 
 public:
+    OrderBook(){
+        buyOrders = new AVLTree();
+        sellOrders = new AVLTree();
+    }
+
     AVLTree* getBuyOrders();
 
     AVLTree* getSellOrders();
