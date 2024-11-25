@@ -3,7 +3,7 @@ import exchange.Exchange;
 
 import java.util.ArrayList;
 
-public class MarketMakingStrategy implements Runnable {
+public class MarketMakingStrategy{
     private Exchange exchange;
     private int maxOrderSize;
     private double spreadFactor;
@@ -16,7 +16,7 @@ public class MarketMakingStrategy implements Runnable {
 
     public double calculateEMA(ArrayList<Double> returns, int period) {
         double alpha = 2.0 / (period + 1);
-        double ema = returns.getFirst(); // Start with the first data point
+        double ema = returns.get(0); // Start with the first data point
 
         for (int i = 1; i < returns.size(); i++) {
             ema = alpha * returns.get(i) + (1 - alpha) * ema;
@@ -61,8 +61,9 @@ public class MarketMakingStrategy implements Runnable {
     }
 
 
-    @Override
-    public void run() {
+    // @Override
+    public void run(){
+        System.out.println("hiiiiiiiiiiii");
         // Order Size is dynamically calculated as follows: Max Order Size/Volatility
         ArrayList<Double> priceHistory = exchange.getPriceHistory(); // get the recent prices
         double volatility = calculateVolatility(priceHistory); // get volatility
@@ -73,7 +74,7 @@ public class MarketMakingStrategy implements Runnable {
 
         double bidPrice = midPrice - (spread / 2);
         double askPrice = midPrice + (spread / 2);
-        System.out.println("hiiiiiiiiiiii");
+        
         if(bidPrice > 0 && askPrice > 0) {
             // Order o1 = new Order("buy", bidPrice, orderSize);
             // Order o2 = new Order("sell", askPrice, orderSize);

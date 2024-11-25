@@ -34,7 +34,7 @@ public class Exchange {
 
         // Will maintain only 10 recent prices
         if(priceHistory.size() > 10) {
-            priceHistory.removeFirst();
+            priceHistory.remove(0);
         }
     }
 

@@ -93,48 +93,35 @@ AVLTree* AVLTree::insert_AVLTree(AVLTree* n, Order* o) {
     }
     
     if(n->order == nullptr) {
-        cout<<"1"<<endl;
         return new AVLTree(o);
     }
     
     if (o->getPrice() <= n->order->getPrice()) {
-        cout<<"2"<<endl;
         n->left = insert_AVLTree(n->left, o);
     } 
     else if(o->getPrice() > n->order->getPrice()) {
-        cout<<"3"<<endl;
         n->right = insert_AVLTree(n->right, o);
     }
     else return (n);
-    cout<<"4"<<endl;
     set_height(n);
-    cout<<"5"<<endl;
     int balance = get_balance(n);
-    cout<<"6"<<endl;
     if(balance>1){
-        cout<<"7"<<endl;
         if(o->getPrice() < n->left->order->getPrice()){
-            cout<<"8"<<endl;
             return right_rotate(n);
         }
         else{
-            cout<<"9"<<endl;
             return left_right_rotate(n);
         }
     }
-    cout<<"9.5"<<endl;
+
     if(balance<-1){
-        cout<<"10"<<endl;
         if(o->getPrice() > n->right->order->getPrice()){
-            cout<<"11"<<endl;
             return left_rotate(n);
         }
         else{
-            cout<<"12"<<endl;
             return right_left_rotate(n);
         }
     }
-    cout<<"13"<<endl;
     return n;
 
 }

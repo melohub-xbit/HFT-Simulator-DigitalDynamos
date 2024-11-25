@@ -30,10 +30,12 @@ public class HFTSimulation {
 
         MarketMakingStrategy mms = new MarketMakingStrategy(hft.e1, 10, 0.01);
         
+
         executor.submit(addOrdersE1);
         // executor.submit(addOrdersE2);
-        executor.submit(mms);
-
+        // executor.submit(mms);
+        mms.run();
+        
         executor.shutdown();
 
         System.out.println("All tasks completed");
