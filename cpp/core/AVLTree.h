@@ -45,6 +45,8 @@ class AVLTree {
         AVLTree* findAVLTreeEnabler(Order dummyOrder, AVLTree* root);
         AVLTree* findJustGreater(Order refOrder, AVLTree* root);
 
+friend class OrderBook;
+friend class Order;
 };
 
 

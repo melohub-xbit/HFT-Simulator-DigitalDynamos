@@ -28,6 +28,9 @@ class Order {
 
         void setQuantity(int quantity);
         string toString();
+
+        friend class OrderBook;
+        friend class AVLTree;
     };
 
 #endif

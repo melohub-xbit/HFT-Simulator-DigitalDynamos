@@ -11,13 +11,48 @@ AVLTree* OrderBook::getSellOrders() {
 }
 
 double OrderBook::getBestBid() {
-    // return buyOrders->findMax()->order.getPrice();
-    return 0.32;
+    AVLTree* root = this->buyOrders;
+
+    cout << "hello best bid" << endl;
+    if (root == NULL) {
+        cout << "root null ask" << endl;
+        return 0.0;
+    }
+    //return node with max price in buyOrders
+    cout << "hello best bid 2" << endl;
+    while (root != NULL && (root->right != NULL)) {
+        cout << "hello best bid 3" << endl;
+        root = root->getRight();
+    }
+    cout << "post loop bid" << endl;
+    if (root) cout << "not null bid" << endl;
+    else cout << "null bid" << endl;
+    //print the price
+    if (root != NULL) cout << root->getOrder()->getPrice() << endl;
+    return root->getOrder()->getPrice();
 }
 
 double OrderBook::getBestAsk() {
-    // return sellOrders.findMin()->order.getPrice();
-    return 0.32;
+    AVLTree* root = sellOrders;
+
+    cout << "hello best ask" << endl;
+    if (root == NULL) {
+        cout << "root null ask" << endl;
+        return 0.0;
+    }
+    cout << "hello best ask 2" << endl;
+
+    while (root != NULL && root->getLeft() != NULL) {
+        cout << "hello best ask 3" << endl;
+        root = root->getLeft();
+    }
+
+    cout << "post loop ask" << endl;
+    if (root) cout << "not null ask" << endl;
+    else cout << "null ask" << endl;
+    if (root != NULL) cout << root->getOrder()->getPrice() << endl;
+    return root->getOrder()->getPrice();
+    // return 0.32;
 }
 
 void OrderBook::addOrder(string orderID, string type, double price, int quantity) {
