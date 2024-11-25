@@ -10,6 +10,11 @@ public class Exchange {
 
     public Exchange() {
         priceHistory = new ArrayList<>();
+        
+        for (int i = 0; i < 10; i++) {
+            priceHistory.add(0.0);
+        }
+
         orderBook = new OrderBook();
         orderBook.createOrderBook();
     }

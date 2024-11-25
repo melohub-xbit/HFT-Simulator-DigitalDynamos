@@ -2,8 +2,9 @@ package strategy;
 import exchange.Exchange;
 
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
-public class MarketMakingStrategy{
+public class MarketMakingStrategy implements Runnable {
     private Exchange exchange;
     private int maxOrderSize;
     private double spreadFactor;
@@ -62,30 +63,47 @@ public class MarketMakingStrategy{
 
 
     // @Override
-    public void run(){
-        System.out.println("hiiiiiiiiiiii");
-        // Order Size is dynamically calculated as follows: Max Order Size/Volatility
-        ArrayList<Double> priceHistory = exchange.getPriceHistory(); // get the recent prices
-        double volatility = calculateVolatility(priceHistory); // get volatility
-
-        double midPrice = exchange.getMidPrice();
-        double spread = spreadFactor * volatility; // dynamic spread
-        int orderSize = (int)Math.ceil(maxOrderSize/volatility); // dynamic order size
-
-        double bidPrice = midPrice - (spread / 2);
-        double askPrice = midPrice + (spread / 2);
-        
-        if(bidPrice > 0 && askPrice > 0) {
-            // Order o1 = new Order("buy", bidPrice, orderSize);
-            // Order o2 = new Order("sell", askPrice, orderSize);
+    public void run(){        
+        while(true){
+            System.out.println("Running Market Making.");
+            // Order Size is dynamically calculated as follows: Max Order Size/Volatility
+            ArrayList<Double> priceHistory = exchange.getPriceHistory(); // get the recent prices
+            double volatility = calculateVolatility(priceHistory); // get volatility
             
-            exchange.getOrderBook().matchBuyOrder(exchange.getHFTId(),"buy",bidPrice,orderSize); // place buy order
-            
-            exchange.getOrderBook().matchSellOrder(exchange.getHFTId(),"sell",askPrice,orderSize); // place sell order
+            double midPrice = exchange.getMidPrice();
+            double spread = spreadFactor * volatility; // dynamic spread
+            int orderSize = (int)Math.ceil(maxOrderSize/volatility); // dynamic order size
 
-            System.out.println("Placed orders: Buy at " + bidPrice + ", Sell at " + askPrice);
+            // Check if the order size is greater than the maximum order size, since initialy the price history is set to 0.
+            if(orderSize > maxOrderSize) {
+                orderSize = maxOrderSize;
+            }
+
+            double bidPrice = midPrice - (spread / 2);
+            double askPrice = midPrice + (spread / 2);
+
+            System.out.println("Mid Price: " + midPrice + ", Spread: " + spread + ", Order Size: " + orderSize);
+            
+            if(bidPrice > 0 && askPrice > 0) {
+                System.out.println("Cooking order.");
+                exchange.getOrderBook().matchBuyOrder(exchange.getHFTId(),"buy",bidPrice,orderSize); // place buy order
+                
+                exchange.getOrderBook().matchSellOrder(exchange.getHFTId(),"sell",askPrice,orderSize); // place sell order
+
+                System.out.println("Placed orders: Buy at " + bidPrice + ", Sell at " + askPrice);
+            } else {
+                System.out.println("Invalid prices. Skipping order.");
+            }
+            
+            System.out.println("Done.");
+
+            try {
+                TimeUnit.SECONDS.sleep(1);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                System.err.println("Order generation interrupted!");
+                break;
+            }
         }
     }
-
-
 }
