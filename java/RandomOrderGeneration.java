@@ -2,7 +2,7 @@ import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import exchange.Exchange;
 
-public class RandomOrderGeneration {
+public class RandomOrderGeneration implements Runnable {
 
     private Exchange exchange;
 

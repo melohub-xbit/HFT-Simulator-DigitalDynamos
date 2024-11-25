@@ -73,7 +73,7 @@ public class MarketMakingStrategy implements Runnable {
 
         double bidPrice = midPrice - (spread / 2);
         double askPrice = midPrice + (spread / 2);
-
+        System.out.println("hiiiiiiiiiiii");
         if(bidPrice > 0 && askPrice > 0) {
             // Order o1 = new Order("buy", bidPrice, orderSize);
             // Order o2 = new Order("sell", askPrice, orderSize);
