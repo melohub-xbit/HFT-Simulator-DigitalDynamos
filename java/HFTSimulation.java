@@ -33,9 +33,9 @@ public class HFTSimulation {
 
         executor.submit(addOrdersE1);
         // executor.submit(addOrdersE2);
-        // executor.submit(mms);
-        mms.run();
-        
+        executor.submit(mms);
+        // mms.run();
+
         executor.shutdown();
 
         System.out.println("All tasks completed");
