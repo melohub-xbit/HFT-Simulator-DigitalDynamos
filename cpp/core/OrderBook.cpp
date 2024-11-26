@@ -55,6 +55,52 @@ double OrderBook::getBestAsk() {
     // return 0.32;
 }
 
+/*
+double OrderBook::getBestBid() {
+    AVLTree* root = this->buyOrders;
+
+    if (root == NULL) {
+        cout << "root null bid" << endl;
+        return 0.0;
+    }
+
+    while (root != NULL && root->getRight() != NULL) {
+        root = root->getRight();
+    }
+
+    if (root == NULL || root->getOrder() == NULL) {
+        cout << "Error: Null root or order in bid" << endl;
+        return 0.0;
+    }
+
+    double price = root->getOrder()->getPrice();
+    cout << "Best bid price: " << price << endl;
+    return price;
+}
+
+double OrderBook::getBestAsk() {
+    AVLTree* root = this->sellOrders;
+
+    if (root == NULL) {
+        cout << "root null ask" << endl;
+        return 0.0;
+    }
+
+    while (root != NULL && root->getLeft() != NULL) {
+        root = root->getLeft();
+    }
+
+    if (root == NULL || root->getOrder() == NULL) {
+        cout << "Error: Null root or order in ask" << endl;
+        return 0.0;
+    }
+
+    double price = root->getOrder()->getPrice();
+    cout << "Best ask price: " << price << endl;
+    return price;
+}
+*/
+
 void OrderBook::addOrder(string orderID, string type, double price, int quantity) {
     Order newOrder = Order(orderID, type, price, quantity);
     cout<<type<<endl;

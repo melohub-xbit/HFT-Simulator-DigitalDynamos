@@ -10,17 +10,17 @@ public class OrderBook {
     private long nativeHandle;
 
     // Native methods
-    public native void createOrderBook();
-    public native void destroyOrderBook();
-    public native void addOrder(String orderID, String type, double price, int quantity);
-    public native void cancelOrder(String orderID);
+    public synchronized native void createOrderBook();
+    public synchronized native void destroyOrderBook();
+    public synchronized native void addOrder(String orderID, String type, double price, int quantity);
+    public synchronized native void cancelOrder(String orderID);
     // highest bid
-    public native double getBestBid();
+    public synchronized native double getBestBid();
     //lowest ask
-    public native double getBestAsk();
+    public synchronized native double getBestAsk();
     
-    public native String[][] matchBuyOrder(String orderID, String type, double price, int quantity);
-    public native String[][] matchSellOrder(String orderID, String type, double price, int quantity);
+    public synchronized native String[][] matchBuyOrder(String orderID, String type, double price, int quantity);
+    public synchronized native String[][] matchSellOrder(String orderID, String type, double price, int quantity);
 }
 
 
