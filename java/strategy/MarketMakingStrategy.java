@@ -8,6 +8,8 @@ public class MarketMakingStrategy implements Runnable {
     private Exchange exchange;
     private int maxOrderSize;
     private double spreadFactor;
+    private String[][] lastBuyOrders;
+    private String[][] lastSellOrders;
 
     public MarketMakingStrategy(Exchange exchange, int maxOrderSize, double spreadFactor) {
         this.exchange = exchange;
@@ -15,6 +17,15 @@ public class MarketMakingStrategy implements Runnable {
         this.spreadFactor = spreadFactor;
     }
 
+
+    public String[][] getLastBuyOrders() {
+        return lastBuyOrders;
+    }
+    
+    public String[][] getLastSellOrders() {
+        return lastSellOrders;
+    }
+    
     public double calculateEMA(ArrayList<Double> returns, int period) {
         double alpha = 2.0 / (period + 1);
         double ema = returns.get(0); // Start with the first data point
@@ -94,8 +105,10 @@ public class MarketMakingStrategy implements Runnable {
                     
                     // exchange.getOrderBook().matchSellOrder(exchange.getHFTId(),"sell",askPrice,orderSize); // place sell order
                     
-                    exchange.getOrderBook().matchBuyOrder(exchange.getHFTId(),"buy",bidPrice,orderSize); // place buy order
-                    exchange.getOrderBook().matchSellOrder(exchange.getHFTId(),"sell",askPrice,orderSize); // place sell order
+                    String[][] buyarray = exchange.getOrderBook().matchBuyOrder(exchange.getHFTId(),"buy",bidPrice,orderSize); // place buy order
+                    String[][] sellarray = exchange.getOrderBook().matchSellOrder(exchange.getHFTId(),"sell",askPrice,orderSize); // place sell order
+
+                    
                     System.out.println("Placed orders: Buy at " + bidPrice + ", Sell at " + askPrice);
                 } else {
                     System.out.println("Invalid prices. Skipping order.");

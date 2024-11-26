@@ -5,9 +5,10 @@ import exchange.Exchange;
 public class RandomOrderGeneration implements Runnable {
 
     private Exchange exchange;
+    private String excNum;
 
-    public RandomOrderGeneration(Exchange exchange){
-        
+    public RandomOrderGeneration(Exchange exchange, String exchNum){
+        this.excNum = exchNum;
         this.exchange = exchange;
     }
 
@@ -26,7 +27,7 @@ public class RandomOrderGeneration implements Runnable {
             int quantity = 1 + random.nextInt(500);
 
             // Generate a unique order ID
-            String orderID = "Order" + idCounter++;
+            String orderID = this.excNum + "Order" + idCounter++;
 
             // Add the order to the order book
             System.out.println("Order details: " + orderID + " $" + price + " " + quantity + " :-" + type);
