@@ -71,32 +71,39 @@ public class MarketMakingStrategy implements Runnable {
             double volatility = calculateVolatility(priceHistory); // get volatility
             
             double midPrice = exchange.getMidPrice();
-            double spread = spreadFactor * volatility; // dynamic spread
-            int orderSize = (int)Math.ceil(maxOrderSize/volatility); // dynamic order size
-
-            // Check if the order size is greater than the maximum order size, since initialy the price history is set to 0.
-            if(orderSize > maxOrderSize) {
-                orderSize = maxOrderSize;
-            }
-
-            double bidPrice = midPrice - (spread / 2);
-            double askPrice = midPrice + (spread / 2);
-
-            System.out.println("Mid Price: " + midPrice + ", Spread: " + spread + ", Order Size: " + orderSize);
-            
-            if(bidPrice > 0 && askPrice > 0) {
-                System.out.println("Cooking order.");
-                exchange.getOrderBook().matchBuyOrder(exchange.getHFTId(),"buy",bidPrice,orderSize); // place buy order
-                
-                exchange.getOrderBook().matchSellOrder(exchange.getHFTId(),"sell",askPrice,orderSize); // place sell order
-
-                System.out.println("Placed orders: Buy at " + bidPrice + ", Sell at " + askPrice);
+            if (midPrice < 0) {
+                System.out.println("Mid price is negative. Skipping order placement.");
             } else {
-                System.out.println("Invalid prices. Skipping order.");
+
+                double spread = spreadFactor * volatility; // dynamic spread
+                int orderSize = (int)Math.ceil(maxOrderSize/volatility); // dynamic order size
+
+                // Check if the order size is greater than the maximum order size, since initialy the price history is set to 0.
+                if(orderSize > maxOrderSize) {
+                    orderSize = maxOrderSize;
+                }
+
+                double bidPrice = midPrice - (spread / 2);
+                double askPrice = midPrice + (spread / 2);
+
+                System.out.println("Mid Price: " + midPrice + ", Spread: " + spread + ", Order Size: " + orderSize);
+                
+                if(bidPrice > 0 && askPrice > 0) {
+                    System.out.println("Cooking order.");
+                    // exchange.getOrderBook().matchBuyOrder(exchange.getHFTId(),"buy",bidPrice,orderSize); // place buy order
+                    
+                    // exchange.getOrderBook().matchSellOrder(exchange.getHFTId(),"sell",askPrice,orderSize); // place sell order
+                    
+                    exchange.getOrderBook().matchBuyOrder(exchange.getHFTId(),"buy",bidPrice,orderSize); // place buy order
+                    exchange.getOrderBook().matchSellOrder(exchange.getHFTId(),"sell",askPrice,orderSize); // place sell order
+                    System.out.println("Placed orders: Buy at " + bidPrice + ", Sell at " + askPrice);
+                } else {
+                    System.out.println("Invalid prices. Skipping order.");
+                }
+                
+                System.out.println("Done.");
             }
             
-            System.out.println("Done.");
-
             try {
                 TimeUnit.SECONDS.sleep(1);
             } catch (InterruptedException e) {

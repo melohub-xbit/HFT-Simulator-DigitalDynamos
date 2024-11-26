@@ -29,9 +29,16 @@ public class RandomOrderGeneration implements Runnable {
             String orderID = "Order" + idCounter++;
 
             // Add the order to the order book
+            System.out.println("Order details: " + orderID + " $" + price + " " + quantity + " :-" + type);
             exchange.addOrder(orderID, type, price, quantity);
             exchange.updatePriceHistory(price);
 
+            if (type == "buy" ) {
+                exchange.getOrderBook().matchBuyOrder(orderID, type, price, quantity);
+            }
+            else {
+                exchange.getOrderBook().matchSellOrder(orderID, type, price, quantity);
+            }
 
             // Wait for one second before generating the next order
             try {
@@ -41,6 +48,8 @@ public class RandomOrderGeneration implements Runnable {
                 System.err.println("Order generation interrupted!");
                 break;
             }
+
+                        
         }
     }
 }

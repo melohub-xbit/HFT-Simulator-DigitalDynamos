@@ -60,6 +60,11 @@ public class Exchange {
         double bestBid = orderBook.getBestBid();
         double bestAsk = orderBook.getBestAsk();
 
-        return (bestAsk - bestBid) / 2;
+        if (bestBid == 0 || bestAsk == 0) {
+            System.out.println("No orders in the order book.");
+            return -1;
+        }
+        System.out.println("in Market making " + "Best Bid: " + bestBid + " Best Ask: " + bestAsk);
+        return (bestAsk + bestBid) / 2;
     }
 }
