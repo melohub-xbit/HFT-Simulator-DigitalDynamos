@@ -215,6 +215,19 @@ AVLTree* AVLTree::findAVLTreeEnabler(Order dummyOrder, AVLTree* root) {
     
 }
 
+AVLTree* AVLTree::findMax(AVLTree* root) {
+    if (root == NULL) {
+        return NULL;
+    }
+    
+    while (root->getRight() != NULL) {
+        root = root->getRight();
+    }
+    
+    return root;
+}
+
+
 AVLTree* AVLTree::findJustGreater(Order refOrder, AVLTree* root) {
     if (!root || !root->order) return nullptr;
     AVLTree* current = root;

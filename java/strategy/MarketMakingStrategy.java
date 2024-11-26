@@ -1,6 +1,7 @@
 package strategy;
 import exchange.Exchange;
-
+import rml.RiskManagement;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
@@ -10,11 +11,17 @@ public class MarketMakingStrategy implements Runnable {
     private double spreadFactor;
     private String[][] lastBuyOrders;
     private String[][] lastSellOrders;
+    private RiskManagement rm;
+    private double profitMM;
+    private PrintStream output;
 
-    public MarketMakingStrategy(Exchange exchange, int maxOrderSize, double spreadFactor) {
+    public MarketMakingStrategy(Exchange exchange, int maxOrderSize, double spreadFactor, RiskManagement rm, PrintStream output) {
         this.exchange = exchange;
         this.maxOrderSize = maxOrderSize;
         this.spreadFactor = spreadFactor;
+        this.rm = rm;
+        this.profitMM = 0;
+        this.output = output;
     }
 
 
@@ -25,7 +32,10 @@ public class MarketMakingStrategy implements Runnable {
     public String[][] getLastSellOrders() {
         return lastSellOrders;
     }
-    
+
+    public double getProfitMM() {
+        return profitMM;
+    }
     public double calculateEMA(ArrayList<Double> returns, int period) {
         double alpha = 2.0 / (period + 1);
         double ema = returns.get(0); // Start with the first data point
@@ -76,15 +86,18 @@ public class MarketMakingStrategy implements Runnable {
     // @Override
     public void run(){        
         while(true){
-            System.out.println("Running Market Making.");
+            output.println("Running Market Making.");
             // Order Size is dynamically calculated as follows: Max Order Size/Volatility
             ArrayList<Double> priceHistory = exchange.getPriceHistory(); // get the recent prices
             double volatility = calculateVolatility(priceHistory); // get volatility
             
             double midPrice = exchange.getMidPrice();
             if (midPrice < 0) {
-                System.out.println("Mid price is negative. Skipping order placement.");
-            } else {
+                output.println("Mid price is negative. Skipping order placement.");
+            } else if (!rm.isTradingAllowed()) {
+                output.println("Trading halted due to risk. (Market Making Strategy)");
+            }
+             else {
 
                 double spread = spreadFactor * volatility; // dynamic spread
                 int orderSize = (int)Math.ceil(maxOrderSize/volatility); // dynamic order size
@@ -97,24 +110,86 @@ public class MarketMakingStrategy implements Runnable {
                 double bidPrice = midPrice - (spread / 2);
                 double askPrice = midPrice + (spread / 2);
 
-                System.out.println("Mid Price: " + midPrice + ", Spread: " + spread + ", Order Size: " + orderSize);
+                output.println("Mid Price: " + midPrice + ", Spread: " + spread + ", Order Size: " + orderSize);
                 
                 if(bidPrice > 0 && askPrice > 0) {
-                    System.out.println("Cooking order.");
+                    output.println("Cooking order.");
                     // exchange.getOrderBook().matchBuyOrder(exchange.getHFTId(),"buy",bidPrice,orderSize); // place buy order
                     
                     // exchange.getOrderBook().matchSellOrder(exchange.getHFTId(),"sell",askPrice,orderSize); // place sell order
                     
-                    String[][] buyarray = exchange.getOrderBook().matchBuyOrder(exchange.getHFTId(),"buy",bidPrice,orderSize); // place buy order
-                    String[][] sellarray = exchange.getOrderBook().matchSellOrder(exchange.getHFTId(),"sell",askPrice,orderSize); // place sell order
+                    lastBuyOrders = exchange.getOrderBook().matchBuyOrder(exchange.getHFTId(),"buy",bidPrice,orderSize); // place buy order
+                    lastSellOrders = exchange.getOrderBook().matchSellOrder(exchange.getHFTId(),"sell",askPrice,orderSize); // place sell order
 
+                    //net profitMM from all the matched orders
+                    for (String[] s : lastBuyOrders) {
+                        String ord1 = s[0];
+                        String ord2 = s[1];
+
+                        String[] ord1Params = ord1.split(",");
+                        String[] ord2Params = ord2.split(",");
+
+                        double ord1Price = Double.parseDouble(ord1Params[2]);
+                        double ord2Price = Double.parseDouble(ord2Params[2]);
+
+                        int ord1Quantity = Integer.parseInt(ord1Params[3]);
+                        int ord2Quantity = Integer.parseInt(ord2Params[3]);
+                        
+                        //output.println("Order 1: " + ord1);
+                        //output.println("Order 2: " + ord2);
+
+                        //seeing that the matched orders are one between hft and one from orderbook
+                        //seeing that only one order has hftId and other doesn't
+                        if ((ord1Params[0].contains("hftId") && !ord2Params[0].contains("hftId")) ||
+                        (!ord1Params[0].contains("hftId") && ord2Params[0].contains("hftId"))) {
+                            if (ord1Params[1].equals("sell")) {
+                                this.profitMM -= Math.abs((ord2Price * ord2Quantity));
+                            }
+                            else {
+                                this.profitMM -= Math.abs((ord1Price * ord1Quantity));
+                            }
+                        }
+                        
                     
-                    System.out.println("Placed orders: Buy at " + bidPrice + ", Sell at " + askPrice);
+                    }
+
+                    for (String[] s : lastSellOrders) {
+                        String ord1 = s[0];
+                        String ord2 = s[1];
+
+                        String[] ord1Params = ord1.split(",");
+                        String[] ord2Params = ord2.split(",");
+
+                        double ord1Price = Double.parseDouble(ord1Params[2]);
+                        double ord2Price = Double.parseDouble(ord2Params[2]);
+
+                        int ord1Quantity = Integer.parseInt(ord1Params[3]);
+                        int ord2Quantity = Integer.parseInt(ord2Params[3]);
+                        
+                        //output.println("Order 1: " + ord1);
+                        //output.println("Order 2: " + ord2);
+                        //seeing that the matched orders are one between hft and one from orderbook
+                        //seeing that only one order has hftId and other doesn't
+                        if ((ord1Params[0].contains("hftId") && !ord2Params[0].contains("hftId")) ||
+                        (!ord1Params[0].contains("hftId") && ord2Params[0].contains("hftId"))) {
+                            if (ord1Params[1].equals("sell")) {
+                                this.profitMM += Math.abs((ord1Price * ord1Quantity));
+                            }
+                            else {
+                                this.profitMM += Math.abs((ord2Price * ord2Quantity));
+                            }
+                        }
+                    }
+
+                    output.println("Net profitMM: " + this.profitMM);
+                    rm.updatePnL((askPrice - bidPrice) * orderSize);
+                    output.println("Placed orders: Buy at " + bidPrice + ", Sell at " + askPrice);
                 } else {
-                    System.out.println("Invalid prices. Skipping order.");
+                    output.println("Invalid prices. Skipping order.");
                 }
                 
-                System.out.println("Done.");
+                output.println("Done.");
+                rm.printMetrics();
             }
             
             try {
@@ -125,5 +200,6 @@ public class MarketMakingStrategy implements Runnable {
                 break;
             }
         }
+        output.println(" ");
     }
 }

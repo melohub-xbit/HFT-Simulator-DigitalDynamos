@@ -1,47 +1,62 @@
 import exchange.Exchange;
+import rml.RiskManagement;
 import strategy.ArbitrageStrategy;
 import strategy.MarketMakingStrategy;
-
 import java.util.concurrent.Executors;
 import java.util.concurrent.ExecutorService;
+import java.io.PrintStream;
+import java.io.FileOutputStream;
 
 public class HFTSimulation {
-
     private Exchange e1;
-    private Exchange e2; //For the purpose of Strategy where we place orders based on different markets
+    private Exchange e2;
     
-
     public HFTSimulation() {
         e1 = new Exchange();
         e2 = new Exchange();
     }
 
-
     public static void main(String[] args) {
-        System.out.println("HFT Simulation");
-        HFTSimulation hft = new HFTSimulation();
+        try {
+            // Create file output streams
+            PrintStream e1Output = new PrintStream(new FileOutputStream("e1_orders.txt"));
+            PrintStream e2Output = new PrintStream(new FileOutputStream("e2_orders.txt"));
+            PrintStream mmsOutput = new PrintStream(new FileOutputStream("market_making.txt"));
+            PrintStream arbOutput = new PrintStream(new FileOutputStream("arbitrage.txt"));
+            PrintStream rmOutput = new PrintStream(new FileOutputStream("rm.txt"));
 
-        System.out.println("Starting HFT Simulation");
-        
-        ExecutorService executor = Executors.newFixedThreadPool(4);
-        
-        RandomOrderGeneration addOrdersE1 = new RandomOrderGeneration(hft.e1, "E1");
-        RandomOrderGeneration addOrdersE2 = new RandomOrderGeneration(hft.e2, "E2");
+            System.out.println("HFT Simulation");
+            HFTSimulation hft = new HFTSimulation();
 
+            System.out.println("Starting HFT Simulation");
+            
+            ExecutorService executor = Executors.newFixedThreadPool(4);
+            
+            RandomOrderGeneration addOrdersE1 = new RandomOrderGeneration(hft.e1, "E1", e1Output);
+            RandomOrderGeneration addOrdersE2 = new RandomOrderGeneration(hft.e2, "E2", e2Output);
+            RiskManagement rm = new RiskManagement(-1000, 500, 0.02, 10000, rmOutput);
 
-        MarketMakingStrategy mms = new MarketMakingStrategy(hft.e1, 10, 0.01);
-        ArbitrageStrategy abs = new ArbitrageStrategy(null, null, 0, 0);
-        
+            MarketMakingStrategy mms = new MarketMakingStrategy(hft.e1, 10, 0.01, rm, mmsOutput);
+            ArbitrageStrategy abs = new ArbitrageStrategy(hft.e1, hft.e2, 0.01, 10, rm, arbOutput);
 
-        executor.submit(addOrdersE1);
-        executor.submit(addOrdersE2);
+            executor.submit(addOrdersE1);
+            executor.submit(addOrdersE2);
+            executor.submit(mms);
+            executor.submit(abs);
 
-        executor.submit(mms);
-        executor.submit(abs);
+            executor.shutdown();
 
-        executor.shutdown();
+            // Add shutdown hook to close files
+            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                e1Output.close();
+                e2Output.close();
+                mmsOutput.close();
+                arbOutput.close();
+                System.out.println("Output files closed successfully");
+            }));
 
-        System.out.println("All tasks completed");
-        
+        } catch (Exception e) {
+            System.err.println("Error setting up output files: " + e.getMessage());
+        }
     }
 }
