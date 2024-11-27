@@ -2,17 +2,21 @@ import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import exchange.Exchange;
 import java.io.PrintStream;
+import gui.MatchedOrdersGUI;
 
 public class RandomOrderGeneration implements Runnable {
 
     private Exchange exchange;
     private String excNum;
     private PrintStream output;
+    private MatchedOrdersGUI gui;
+    
 
-    public RandomOrderGeneration(Exchange exchange, String exchNum, PrintStream output) {
+    public RandomOrderGeneration(Exchange exchange, String exchNum, PrintStream output, MatchedOrdersGUI gui) {
         this.excNum = exchNum;
         this.exchange = exchange;
         this.output = output;
+        this.gui = gui;
     }
 
     public void run(){
@@ -60,19 +64,6 @@ public class RandomOrderGeneration implements Runnable {
                 int ord1Quantity = Integer.parseInt(ord1Params[3]);
                 int ord2Quantity = Integer.parseInt(ord2Params[3]);
                 
-                //output.println("Order 1: " + ord1);
-                //output.println("Order 2: " + ord2);
-                //seeing that the matched orders are one between hft and one from orderbook
-                //seeing that only one order has hftId and other doesn't
-                // if ((ord1Params[0].contains("hftId") && !ord2Params[0].contains("hftId")) ||
-                // (!ord1Params[0].contains("hftId") && ord2Params[0].contains("hftId"))) {
-                //     if (ord1Params[1].equals("sell")) {
-                //         this.profitMM += (ord1Price * ord1Quantity) - (ord2Price * ord2Quantity);
-                //     }
-                //     else {
-                //         this.profitMM += (ord2Price * ord2Quantity) - (ord1Price * ord1Quantity);
-                //     }
-                // }
             }
             // Wait for one second before generating the next order
             try {
@@ -82,8 +73,6 @@ public class RandomOrderGeneration implements Runnable {
                 System.err.println("Order generation interrupted!");
                 break;
             }
-
-                        
         }
         output.println(" ");
     }

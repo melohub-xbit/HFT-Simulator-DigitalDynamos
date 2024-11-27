@@ -86,20 +86,14 @@ public class ArbitrageStrategy implements Runnable {
                             int ord1Quantity = Integer.parseInt(ord1Params[3]);
                             int ord2Quantity = Integer.parseInt(ord2Params[3]);
                             
-                            if ((ord1Params[0].contains("hftId") && !ord2Params[0].contains("hftId")) ||
-                            (!ord1Params[0].contains("hftId") && ord2Params[0].contains("hftId"))) {
-                                if (ord1Params[1].equals("sell")) {
-                                    totalBuy -= Math.abs((ord2Price * ord2Quantity));
-                                }
-                                else {
-                                    totalBuy -= Math.abs((ord1Price * ord1Quantity));
-                                }
+
+                            if (ord1Params[1].equals("sell")) {
+                                totalBuy -= Math.abs((ord2Price * ord2Quantity));
                             }
-                            this.gui.addMatchedOrder(
-                            ord1,
-                            ord2,
-                            this.profitArb
-                            );
+                            else {
+                                totalBuy -= Math.abs((ord1Price * ord1Quantity));
+                            }
+                            
                         }
                         
                         double totalSell = 0;
@@ -116,16 +110,13 @@ public class ArbitrageStrategy implements Runnable {
                             int ord1Quantity = Integer.parseInt(ord1Params[3]);
                             int ord2Quantity = Integer.parseInt(ord2Params[3]);
                             
-                            if ((ord1Params[0].contains("hftId") && !ord2Params[0].contains("hftId")) ||
-                            (!ord1Params[0].contains("hftId") && ord2Params[0].contains("hftId"))) {
-                                if (ord1Params[1].equals("sell")) {
-                                    totalSell += Math.abs((ord1Price * ord1Quantity));
-                                }
-                                else {
-                                    totalSell += Math.abs((ord2Price * ord2Quantity));
-                                }
+                            if (ord1Params[1].equals("sell")) {
+                                totalSell += Math.abs((ord1Price * ord1Quantity));
                             }
-                            
+                            else {
+                                totalSell += Math.abs((ord2Price * ord2Quantity));
+                            }
+
                             this.gui.addMatchedOrder(
                             ord1,
                             ord2,
@@ -166,16 +157,13 @@ public class ArbitrageStrategy implements Runnable {
                             int ord1Quantity = Integer.parseInt(ord1Params[3]);
                             int ord2Quantity = Integer.parseInt(ord2Params[3]);
                             
-                            if ((ord1Params[0].contains("hftId") && !ord2Params[0].contains("hftId")) ||
-                            (!ord1Params[0].contains("hftId") && ord2Params[0].contains("hftId"))) {
-                                if (ord1Params[1].equals("sell")) {
-                                    totalBuy -= Math.abs((ord2Price * ord2Quantity));
-                                }
-                                else {
-                                    totalBuy -= Math.abs((ord1Price * ord1Quantity));
-                                }
+
+                            if (ord1Params[1].equals("sell")) {
+                                totalBuy -= Math.abs((ord2Price * ord2Quantity));
                             }
-                            
+                            else {
+                                totalBuy -= Math.abs((ord1Price * ord1Quantity));
+                            }                            
                         }
                         
                         double totalSell = 0;
@@ -192,16 +180,13 @@ public class ArbitrageStrategy implements Runnable {
                             int ord1Quantity = Integer.parseInt(ord1Params[3]);
                             int ord2Quantity = Integer.parseInt(ord2Params[3]);
                             
-                            if ((ord1Params[0].contains("hftId") && !ord2Params[0].contains("hftId")) ||
-                            (!ord1Params[0].contains("hftId") && ord2Params[0].contains("hftId"))) {
-                                if (ord1Params[1].equals("sell")) {
-                                    totalSell += Math.abs((ord1Price * ord1Quantity));
-                                }
-                                else {
-                                    totalSell += Math.abs((ord2Price * ord2Quantity));
-                                }
+
+                            if (ord1Params[1].equals("sell")) {
+                                totalSell += Math.abs((ord1Price * ord1Quantity));
                             }
-                            
+                            else {
+                                totalSell += Math.abs((ord2Price * ord2Quantity));
+                            }
                         }
                         
                         System.out.println("----------------------------------------");

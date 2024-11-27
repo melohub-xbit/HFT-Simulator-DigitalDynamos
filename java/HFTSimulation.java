@@ -35,8 +35,8 @@ public class HFTSimulation {
             
             ExecutorService executor = Executors.newFixedThreadPool(4);
             
-            RandomOrderGeneration addOrdersE1 = new RandomOrderGeneration(hft.e1, "E1", e1Output);
-            RandomOrderGeneration addOrdersE2 = new RandomOrderGeneration(hft.e2, "E2", e2Output);
+            RandomOrderGeneration addOrdersE1 = new RandomOrderGeneration(hft.e1, "E1", e1Output, gui);
+            RandomOrderGeneration addOrdersE2 = new RandomOrderGeneration(hft.e2, "E2", e2Output, gui);
             RiskManagement rm = new RiskManagement(-1000, 500, 0.02, 10000, rmOutput);
 
             MarketMakingStrategy mms = new MarketMakingStrategy(hft.e1, 10, 0.01, rm, mmsOutput, gui);

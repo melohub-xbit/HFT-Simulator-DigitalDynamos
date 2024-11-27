@@ -144,17 +144,14 @@ public class MarketMakingStrategy implements Runnable {
 
                         //seeing that the matched orders are one between hft and one from orderbook
                         //seeing that only one order has hftId and other doesn't
-                        if ((ord1Params[0].contains("hftId") && !ord2Params[0].contains("hftId")) ||
-                        (!ord1Params[0].contains("hftId") && ord2Params[0].contains("hftId"))) {
-                            if (ord1Params[1].equals("sell")) {
-                                totalBuy -= Math.abs((ord2Price * ord2Quantity));
-                            }
-                            else {
-                                totalBuy -= Math.abs((ord1Price * ord1Quantity));
-                            }
+                        
+
+                        if (ord1Params[1].equals("sell")) {
+                            totalBuy -= Math.abs((ord2Price * ord2Quantity));
                         }
-                        
-                        
+                        else {
+                            totalBuy -= Math.abs((ord1Price * ord1Quantity));
+                        }                        
                     
                     }
 
@@ -176,14 +173,13 @@ public class MarketMakingStrategy implements Runnable {
                         //output.println("Order 2: " + ord2);
                         //seeing that the matched orders are one between hft and one from orderbook
                         //seeing that only one order has hftId and other doesn't
-                        if ((ord1Params[0].contains("hftId") && !ord2Params[0].contains("hftId")) ||
-                        (!ord1Params[0].contains("hftId") && ord2Params[0].contains("hftId"))) {
-                            if (ord1Params[1].equals("sell")) {
-                                totalSell += Math.abs((ord1Price * ord1Quantity));
-                            }
-                            else {
-                                totalSell += Math.abs((ord2Price * ord2Quantity));
-                            }
+                        
+                        
+                        if (ord1Params[1].equals("sell")) {
+                            totalSell += Math.abs((ord1Price * ord1Quantity));
+                        }
+                        else {
+                            totalSell += Math.abs((ord2Price * ord2Quantity));
                         }
                         
                     }
