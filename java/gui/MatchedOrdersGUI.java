@@ -118,7 +118,7 @@ public class MatchedOrdersGUI {
             String buyEntry = String.format(
                 "╔═══════════════════════════╗%n" +
                 "║ %s%n" +
-                "║ Profit: Rs%s%n" +
+                "║ Profit: Rs %s%n" +
                 "╚═══════════════════════════╝%n%n",
                 buyOrder, df.format(profit/2)
             );
@@ -126,7 +126,7 @@ public class MatchedOrdersGUI {
             String sellEntry = String.format(
                 "╔═══════════════════════════╗%n" +
                 "║ %s%n" +
-                "║ Profit: Rs%s%n" +
+                "║ Profit: Rs %s%n" +
                 "╚═══════════════════════════╝%n%n",
                 sellOrder, df.format(profit/2)
             );
@@ -152,7 +152,7 @@ public class MatchedOrdersGUI {
             buyQueue.forEach(entry -> leftOrdersLog.append(entry));
             sellQueue.forEach(entry -> rightOrdersLog.append(entry));
             
-            totalProfitLabel.setText("Total Profit: Rs" + df.format(totalProfit));
+            totalProfitLabel.setText("Total Profit: Rs " + df.format(totalProfit));
             
             // Auto-scroll both panels
             leftOrdersLog.setCaretPosition(leftOrdersLog.getDocument().getLength());

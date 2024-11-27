@@ -34,7 +34,7 @@ void Order::setQuantity(int quantity) {
 void Order::displayOrder()  {
     cout << "Order ID: " << id << "\n"
          << "Type: " << type << "\n"
-         << "Price: Rs" << price << "\n"
+         << "Price: Rs " << price << "\n"
          << "Quantity: " << quantity << "\n";
 }
 

@@ -77,8 +77,8 @@ public class RiskManagement {
     }
 
     public void printMetrics() {
-        output.println("Cumulative P&L: Rs" + cumulativePnL);
-        output.println("Value at Risk (VaR): Rs" + calculateVaR(returnsHistory));
+        output.println("Cumulative P&L: Rs " + cumulativePnL);
+        output.println("Value at Risk (VaR): Rs " + calculateVaR(returnsHistory));
         output.println("Sharpe Ratio: " + calculateSharpeRatio());
     }
 
