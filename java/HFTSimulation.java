@@ -6,6 +6,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ExecutorService;
 import java.io.PrintStream;
 import java.io.FileOutputStream;
+import gui.MatchedOrdersGUI;
 
 public class HFTSimulation {
     private Exchange e1;
@@ -18,6 +19,8 @@ public class HFTSimulation {
 
     public static void main(String[] args) {
         try {
+            MatchedOrdersGUI gui = new MatchedOrdersGUI();
+
             // Create file output streams
             PrintStream e1Output = new PrintStream(new FileOutputStream("e1_orders.txt"));
             PrintStream e2Output = new PrintStream(new FileOutputStream("e2_orders.txt"));
@@ -36,8 +39,8 @@ public class HFTSimulation {
             RandomOrderGeneration addOrdersE2 = new RandomOrderGeneration(hft.e2, "E2", e2Output);
             RiskManagement rm = new RiskManagement(-1000, 500, 0.02, 10000, rmOutput);
 
-            MarketMakingStrategy mms = new MarketMakingStrategy(hft.e1, 10, 0.01, rm, mmsOutput);
-            ArbitrageStrategy abs = new ArbitrageStrategy(hft.e1, hft.e2, 0.01, 10, rm, arbOutput);
+            MarketMakingStrategy mms = new MarketMakingStrategy(hft.e1, 10, 0.01, rm, mmsOutput, gui);
+            ArbitrageStrategy abs = new ArbitrageStrategy(hft.e1, hft.e2, 0.01, 10, rm, arbOutput, gui);
 
             executor.submit(addOrdersE1);
             executor.submit(addOrdersE2);

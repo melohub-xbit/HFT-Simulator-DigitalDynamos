@@ -309,8 +309,8 @@ vector<vector<string>> OrderBook::matchBuyOrder(string orderID, string type, dou
         Order tempOrder = Order(minNode->getId(), minNode->getType(), executionPrice, fillQuantity);
         Order executedBuyOrder = Order(buyOrder->getId(), buyOrder->getType(), executionPrice, fillQuantity);
         
-        temp.push_back(tempOrder.toString());
         temp.push_back(executedBuyOrder.toString());
+        temp.push_back(tempOrder.toString());
         matchedOrders.push_back(temp);
 
         cout << "Matched orders in buy:" << endl;
@@ -358,7 +358,7 @@ vector<vector<string>> OrderBook::matchSellOrder(string orderID, string type, do
 
     while (maxNode != NULL && maxNode->getPrice() >= sellOrder->getPrice()) {
         int fillQuantity = min(maxNode->getQuantity(), sellOrder->getQuantity());
-        double executionPrice = sellOrder->getPrice();
+        double executionPrice = maxNode->getPrice();
 
         vector<string> temp;
         Order tempOrder = Order(maxNode->getId(), maxNode->getType(), executionPrice, fillQuantity);

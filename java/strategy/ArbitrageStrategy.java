@@ -3,6 +3,7 @@ import java.io.PrintStream;
 
 import exchange.Exchange;
 import rml.RiskManagement;
+import gui.MatchedOrdersGUI;
 
 public class ArbitrageStrategy implements Runnable {
     private Exchange exchange1;
@@ -16,8 +17,9 @@ public class ArbitrageStrategy implements Runnable {
     private RiskManagement rm;
     private double profitArb;
     private PrintStream output;
+    private MatchedOrdersGUI gui;
 
-    public ArbitrageStrategy(Exchange e1, Exchange e2, double transactionCost, int tradeSize, RiskManagement rm, PrintStream output) {
+    public ArbitrageStrategy(Exchange e1, Exchange e2, double transactionCost, int tradeSize, RiskManagement rm, PrintStream output, MatchedOrdersGUI gui) {
         this.exchange1 = e1;
         this.exchange2 = e2;
         this.transactionCost = transactionCost;
@@ -25,6 +27,7 @@ public class ArbitrageStrategy implements Runnable {
         this.rm = rm;
         this.profitArb = 0;
         this.output = output;
+        this.gui = gui;
     }
 
     public String[][] getLastBuyOrders() {
@@ -65,8 +68,8 @@ public class ArbitrageStrategy implements Runnable {
                     if(bestBid1 > bestAsk2 + transactionCost) {
                         double predictedProfit = bestBid1 - bestAsk2 - transactionCost;
                         
-                        lastBuyOrders = exchange2.getOrderBook().matchBuyOrder("1","buy",bestAsk2, tradeSize);
-                        lastSellOrders = exchange1.getOrderBook().matchSellOrder("1","sell",bestBid1, tradeSize);
+                        lastBuyOrders = exchange2.getOrderBook().matchBuyOrder(exchange2.getHFTId(),"buy",bestAsk2, tradeSize);
+                        lastSellOrders = exchange1.getOrderBook().matchSellOrder(exchange1.getHFTId(),"sell",bestBid1, tradeSize);
     
                         //net profitArb from all the matched orders
                         for (String[] s : lastBuyOrders) {
@@ -91,6 +94,11 @@ public class ArbitrageStrategy implements Runnable {
                                     this.profitArb -= Math.abs((ord1Price * ord1Quantity));
                                 }
                             }
+                            this.gui.addMatchedOrder(
+                            ord1,
+                            ord2,
+                            this.profitArb
+                            );
                         }
     
                         for (String[] s : lastSellOrders) {
@@ -105,7 +113,7 @@ public class ArbitrageStrategy implements Runnable {
     
                             int ord1Quantity = Integer.parseInt(ord1Params[3]);
                             int ord2Quantity = Integer.parseInt(ord2Params[3]);
-    
+                            
                             if ((ord1Params[0].contains("hftId") && !ord2Params[0].contains("hftId")) ||
                             (!ord1Params[0].contains("hftId") && ord2Params[0].contains("hftId"))) {
                                 if (ord1Params[1].equals("sell")) {
@@ -115,6 +123,11 @@ public class ArbitrageStrategy implements Runnable {
                                     this.profitArb += Math.abs((ord2Price * ord2Quantity));
                                 }
                             }
+                            this.gui.addMatchedOrder(
+                            ord1,
+                            ord2,
+                            this.profitArb
+                            );
                         }
     
                         rm.updatePnL(predictedProfit * tradeSize);
@@ -149,6 +162,11 @@ public class ArbitrageStrategy implements Runnable {
                                     this.profitArb -= Math.abs((ord1Price * ord1Quantity));
                                 }
                             }
+                            this.gui.addMatchedOrder(
+                            ord1,
+                            ord2,
+                            this.profitArb
+                            );
                         }
     
                         for (String[] s : lastSellOrders) {
@@ -173,10 +191,16 @@ public class ArbitrageStrategy implements Runnable {
                                     this.profitArb += Math.abs((ord2Price * ord2Quantity));
                                 }
                             }
+                            this.gui.addMatchedOrder(
+                            ord1,
+                            ord2,
+                            this.profitArb
+                            );
                         }
     
                         rm.updatePnL(predictedProfit * tradeSize);
                     }
+                    
                     output.println("Arbitrage profit: " + this.profitArb);
                 }
     

@@ -4,6 +4,7 @@ import rml.RiskManagement;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
+import gui.MatchedOrdersGUI;
 
 public class MarketMakingStrategy implements Runnable {
     private Exchange exchange;
@@ -14,14 +15,16 @@ public class MarketMakingStrategy implements Runnable {
     private RiskManagement rm;
     private double profitMM;
     private PrintStream output;
+    private MatchedOrdersGUI gui;
 
-    public MarketMakingStrategy(Exchange exchange, int maxOrderSize, double spreadFactor, RiskManagement rm, PrintStream output) {
+    public MarketMakingStrategy(Exchange exchange, int maxOrderSize, double spreadFactor, RiskManagement rm, PrintStream output, MatchedOrdersGUI gui) {
         this.exchange = exchange;
         this.maxOrderSize = maxOrderSize;
         this.spreadFactor = spreadFactor;
         this.rm = rm;
         this.profitMM = 0;
         this.output = output;
+        this.gui = gui;
     }
 
 
@@ -149,6 +152,11 @@ public class MarketMakingStrategy implements Runnable {
                                 this.profitMM -= Math.abs((ord1Price * ord1Quantity));
                             }
                         }
+                        this.gui.addMatchedOrder(
+                            ord1,
+                            ord2,
+                            this.profitMM
+                        );
                         
                     
                     }
@@ -179,6 +187,11 @@ public class MarketMakingStrategy implements Runnable {
                                 this.profitMM += Math.abs((ord2Price * ord2Quantity));
                             }
                         }
+                        this.gui.addMatchedOrder(
+                            ord1,
+                            ord2,
+                            this.profitMM
+                        );
                     }
 
                     output.println("Net profitMM: " + this.profitMM);
