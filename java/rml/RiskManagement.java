@@ -3,10 +3,10 @@ import java.io.PrintStream;
 import java.util.*;
 
 public class RiskManagement {
-    private double maxLossThreshold;  // e.g., -$1000
-    private double maxVaRThreshold;  // e.g., $500
+    private double maxLossThreshold;  // e.g., -Rs1000
+    private double maxVaRThreshold;  // e.g., Rs500
     private double riskFreeRate;     // e.g., 0.02 (2%)
-    private double totalCapital;     // e.g., $100,000
+    private double totalCapital;     // e.g., Rs100,000
 
     private double cumulativePnL = 0.0;
     private List<Double> returnsHistory = new ArrayList<>();
@@ -77,8 +77,8 @@ public class RiskManagement {
     }
 
     public void printMetrics() {
-        output.println("Cumulative P&L: $" + cumulativePnL);
-        output.println("Value at Risk (VaR): $" + calculateVaR(returnsHistory));
+        output.println("Cumulative P&L: Rs" + cumulativePnL);
+        output.println("Value at Risk (VaR): Rs" + calculateVaR(returnsHistory));
         output.println("Sharpe Ratio: " + calculateSharpeRatio());
     }
 

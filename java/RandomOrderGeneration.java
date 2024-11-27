@@ -33,11 +33,11 @@ public class RandomOrderGeneration implements Runnable {
             String orderID = this.excNum + "Order" + idCounter++;
 
             // Add the order to the order book
-            //output.println("Order details: " + orderID + " $" + price + " " + quantity + " :-" + type);
+            //output.println("Order details: " + orderID + " Rs" + price + " " + quantity + " :-" + type);
             exchange.addOrder(orderID, type, price, quantity);
             exchange.updatePriceHistory(price);
 
-            output.println("Order added: " + orderID + " $" + price + " " + quantity + " :-" + type);
+            output.println("Order added: " + orderID + " Rs" + price + " " + quantity + " :-" + type);
             String[][] addedAndMatched;
             if (type.equals("buy")) {
                 addedAndMatched = exchange.getOrderBook().matchBuyOrder(orderID, type, price, quantity);

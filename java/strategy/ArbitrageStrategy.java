@@ -70,7 +70,8 @@ public class ArbitrageStrategy implements Runnable {
                         
                         lastBuyOrders = exchange2.getOrderBook().matchBuyOrder(exchange2.getHFTId(),"buy",bestAsk2, tradeSize);
                         lastSellOrders = exchange1.getOrderBook().matchSellOrder(exchange1.getHFTId(),"sell",bestBid1, tradeSize);
-    
+                        
+                        double totalBuy = 0;
                         //net profitArb from all the matched orders
                         for (String[] s : lastBuyOrders) {
                             String ord1 = s[0];
@@ -88,10 +89,10 @@ public class ArbitrageStrategy implements Runnable {
                             if ((ord1Params[0].contains("hftId") && !ord2Params[0].contains("hftId")) ||
                             (!ord1Params[0].contains("hftId") && ord2Params[0].contains("hftId"))) {
                                 if (ord1Params[1].equals("sell")) {
-                                    this.profitArb -= Math.abs((ord2Price * ord2Quantity));
+                                    totalBuy -= Math.abs((ord2Price * ord2Quantity));
                                 }
                                 else {
-                                    this.profitArb -= Math.abs((ord1Price * ord1Quantity));
+                                    totalBuy -= Math.abs((ord1Price * ord1Quantity));
                                 }
                             }
                             this.gui.addMatchedOrder(
@@ -100,7 +101,8 @@ public class ArbitrageStrategy implements Runnable {
                             this.profitArb
                             );
                         }
-    
+                        
+                        double totalSell = 0;
                         for (String[] s : lastSellOrders) {
                             String ord1 = s[0];
                             String ord2 = s[1];
@@ -117,18 +119,28 @@ public class ArbitrageStrategy implements Runnable {
                             if ((ord1Params[0].contains("hftId") && !ord2Params[0].contains("hftId")) ||
                             (!ord1Params[0].contains("hftId") && ord2Params[0].contains("hftId"))) {
                                 if (ord1Params[1].equals("sell")) {
-                                    this.profitArb += Math.abs((ord1Price * ord1Quantity));
+                                    totalSell += Math.abs((ord1Price * ord1Quantity));
                                 }
                                 else {
-                                    this.profitArb += Math.abs((ord2Price * ord2Quantity));
+                                    totalSell += Math.abs((ord2Price * ord2Quantity));
                                 }
                             }
+                            
                             this.gui.addMatchedOrder(
                             ord1,
                             ord2,
                             this.profitArb
                             );
                         }
+
+                        this.profitArb = totalSell + totalBuy;
+                        System.out.println("--------------------------------------------");
+                        this.gui.addMatchedOrder(
+                        "",
+                        "",
+                        this.profitArb
+                        );
+                        System.out.println("total sell: " + totalSell  + "    total buy: " + totalBuy);
     
                         rm.updatePnL(predictedProfit * tradeSize);
                     }
@@ -140,6 +152,7 @@ public class ArbitrageStrategy implements Runnable {
                         lastBuyOrders = exchange1.getOrderBook().matchBuyOrder(exchange1.getHFTId(),"buy",bestAsk1, tradeSize);
                         lastSellOrders = exchange2.getOrderBook().matchSellOrder(exchange2.getHFTId(),"sell",bestBid2, tradeSize);
                         
+                        double totalBuy = 0;
                         for (String[] s : lastBuyOrders) {
                             String ord1 = s[0];
                             String ord2 = s[1];
@@ -156,19 +169,16 @@ public class ArbitrageStrategy implements Runnable {
                             if ((ord1Params[0].contains("hftId") && !ord2Params[0].contains("hftId")) ||
                             (!ord1Params[0].contains("hftId") && ord2Params[0].contains("hftId"))) {
                                 if (ord1Params[1].equals("sell")) {
-                                    this.profitArb -= Math.abs((ord2Price * ord2Quantity));
+                                    totalBuy -= Math.abs((ord2Price * ord2Quantity));
                                 }
                                 else {
-                                    this.profitArb -= Math.abs((ord1Price * ord1Quantity));
+                                    totalBuy -= Math.abs((ord1Price * ord1Quantity));
                                 }
                             }
-                            this.gui.addMatchedOrder(
-                            ord1,
-                            ord2,
-                            this.profitArb
-                            );
+                            
                         }
-    
+                        
+                        double totalSell = 0;
                         for (String[] s : lastSellOrders) {
                             String ord1 = s[0];
                             String ord2 = s[1];
@@ -185,19 +195,23 @@ public class ArbitrageStrategy implements Runnable {
                             if ((ord1Params[0].contains("hftId") && !ord2Params[0].contains("hftId")) ||
                             (!ord1Params[0].contains("hftId") && ord2Params[0].contains("hftId"))) {
                                 if (ord1Params[1].equals("sell")) {
-                                    this.profitArb += Math.abs((ord1Price * ord1Quantity));
+                                    totalSell += Math.abs((ord1Price * ord1Quantity));
                                 }
                                 else {
-                                    this.profitArb += Math.abs((ord2Price * ord2Quantity));
+                                    totalSell += Math.abs((ord2Price * ord2Quantity));
                                 }
                             }
-                            this.gui.addMatchedOrder(
-                            ord1,
-                            ord2,
-                            this.profitArb
-                            );
+                            
                         }
-    
+                        
+                        System.out.println("----------------------------------------");
+                        this.profitArb = totalSell + totalBuy;
+                        this.gui.addMatchedOrder(
+                        "",
+                        "",
+                        this.profitArb
+                        );
+                        System.out.println("total sell: " + totalSell  + "    total buy: " + totalBuy);
                         rm.updatePnL(predictedProfit * tradeSize);
                     }
                     

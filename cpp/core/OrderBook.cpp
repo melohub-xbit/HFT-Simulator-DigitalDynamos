@@ -59,7 +59,6 @@ double OrderBook::getBestBid() {
     AVLTree* root = this->buyOrders;
 
     if (root == NULL) {
-        cout << "root null bid" << endl;
         return 0.0;
     }
 
@@ -68,12 +67,10 @@ double OrderBook::getBestBid() {
     }
 
     if (root == NULL || root->getOrder() == NULL) {
-        cout << "Error: Null root or order in bid" << endl;
         return 0.0;
     }
 
     double price = root->getOrder()->getPrice();
-    cout << "Best bid price: " << price << endl;
     return price;
 }
 
@@ -81,7 +78,6 @@ double OrderBook::getBestAsk() {
     AVLTree* root = this->sellOrders;
 
     if (root == NULL) {
-        cout << "root null ask" << endl;
         return 0.0;
     }
 
@@ -90,12 +86,10 @@ double OrderBook::getBestAsk() {
     }
 
     if (root == NULL || root->getOrder() == NULL) {
-        cout << "Error: Null root or order in ask" << endl;
         return 0.0;
     }
 
     double price = root->getOrder()->getPrice();
-    cout << "Best ask price: " << price << endl;
     return price;
 }
 
@@ -367,9 +361,6 @@ vector<vector<string>> OrderBook::matchSellOrder(string orderID, string type, do
         temp.push_back(tempOrder.toString());
         temp.push_back(executedSellOrder.toString());
         matchedOrders.push_back(temp);
-
-        cout << "Matched orders in sell:" << endl;
-        cout << "Buy: " << temp[0] << " Sell: " << temp[1] << endl;
         
         maxNode->setQuantity(maxNode->getQuantity() - fillQuantity);
         sellOrder->setQuantity(sellOrder->getQuantity() - fillQuantity);
