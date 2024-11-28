@@ -28,6 +28,7 @@ public class MatchedOrdersGUI {
     private Queue<String> sellQueue = new LinkedList<>();
     private GraphPanel graphPanel;
     private List<Double> prices = new ArrayList<>();
+    private static final int MAX_GRAPH_POINTS = 50;
 
     public MatchedOrdersGUI() {
         createGUI();
@@ -103,11 +104,11 @@ public class MatchedOrdersGUI {
         layeredPane.add(splitPane, JLayeredPane.DEFAULT_LAYER);
     
         // Initialize and add graph panel
-        prices.add(100.0);
-        prices.add(105.0);
-        prices.add(103.0);
-        prices.add(107.0);
-        prices.add(104.0);
+        prices.add(0.0);
+        prices.add(0.0);
+        prices.add(0.0);
+        prices.add(0.0);
+        prices.add(0.0);
     
         graphPanel = new GraphPanel(prices);
         graphPanel.setBorder(BorderFactory.createCompoundBorder(
@@ -139,6 +140,16 @@ public class MatchedOrdersGUI {
     
         startButton = new JButton("Start Monitoring");
         stopButton = new JButton("Stop Monitoring");
+        JButton exitButton = new JButton("EXIT");
+        exitButton.setBackground(new Color(255, 69, 0));
+        exitButton.setForeground(Color.WHITE);
+        exitButton.setFont(new Font("Arial", Font.BOLD, 14));
+        exitButton.addActionListener(e -> {
+            stopMonitoring();
+            System.exit(0);
+        });
+        buttonPanel.add(exitButton);
+
         startButton.setBackground(new Color(144, 238, 144));
         stopButton.setBackground(new Color(255, 99, 71));
         stopButton.setEnabled(false);
@@ -165,7 +176,7 @@ public class MatchedOrdersGUI {
         SwingUtilities.invokeLater(() -> {
             totalProfit += profit;
             prices.add(totalProfit);
-            if (prices.size() > 20) prices.remove(0);
+            if (prices.size() > MAX_GRAPH_POINTS) prices.remove(0);
             graphPanel.repaint();
 
             String buyEntry = String.format("BUY: %s Profit: Rs %.2f%n", buyOrder, profit / 2);
@@ -222,86 +233,104 @@ public class MatchedOrdersGUI {
             super.paintComponent(g);
             Graphics2D g2 = (Graphics2D) g;
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-    
+
             int width = getWidth() - 2 * AXIS_PADDING;
             int height = getHeight() - 2 * AXIS_PADDING;
-    
+
+            // Add title
+            g2.setFont(new Font("Arial", Font.BOLD, 16));
+            String title = "Profits";
+            FontMetrics metrics = g2.getFontMetrics();
+            int titleWidth = metrics.stringWidth(title);
+            g2.drawString(title, (getWidth() - titleWidth) / 2, 25);
+
             // Draw axes
             g2.setColor(Color.BLACK);
             g2.setStroke(new BasicStroke(2));
-            // Y-axis
             g2.drawLine(AXIS_PADDING, AXIS_PADDING, AXIS_PADDING, height + AXIS_PADDING);
-            // X-axis
             g2.drawLine(AXIS_PADDING, height + AXIS_PADDING, width + AXIS_PADDING, height + AXIS_PADDING);
-    
+
             if (data.isEmpty()) return;
-    
+
             double maxProfit = data.stream().max(Double::compareTo).orElse(0.0);
             double minProfit = data.stream().min(Double::compareTo).orElse(0.0);
             double range = maxProfit - minProfit;
             double scale = height / (range == 0 ? 1 : range);
-    
-            // Draw Y-axis labels and grid lines
-            g2.setStroke(new BasicStroke(1));
+
+            drawYAxisLabels(g2, height, minProfit, range, scale);
+
+            // Draw filled areas and lines
+            for (int i = 0; i < data.size() - 1; i++) {
+                int x1 = AXIS_PADDING + (i * width / (data.size() - 1));
+                int y1 = height + AXIS_PADDING - (int)((data.get(i) - minProfit) * scale);
+                int x2 = AXIS_PADDING + ((i + 1) * width / (data.size() - 1));
+                int y2 = height + AXIS_PADDING - (int)((data.get(i + 1) - minProfit) * scale);
+
+                // Create and fill area
+                Path2D.Double path = new Path2D.Double();
+                path.moveTo(x1, height + AXIS_PADDING);
+                path.lineTo(x1, y1);
+                path.lineTo(x2, y2);
+                path.lineTo(x2, height + AXIS_PADDING);
+                path.closePath();
+
+                // Set colors based on slope
+                Color lineColor;
+                Color fillColor;
+                if (data.get(i + 1) > data.get(i)) {
+                    lineColor = new Color(34, 139, 34);
+                    fillColor = new Color(34, 139, 34, 40);
+                } else {
+                    lineColor = new Color(220, 20, 60);
+                    fillColor = new Color(220, 20, 60, 40);
+                }
+
+                // Fill area
+                g2.setColor(fillColor);
+                g2.fill(path);
+
+                // Draw line
+                g2.setColor(lineColor);
+                g2.setStroke(new BasicStroke(2));
+                g2.drawLine(x1, y1, x2, y2);
+
+                // Draw points
+                g2.fillOval(x1 - 3, y1 - 3, 6, 6);
+                if (i == data.size() - 2) {
+                    g2.fillOval(x2 - 3, y2 - 3, 6, 6);
+                }
+            }
+
+            drawTimeLabels(g2, width, height);
+        }
+
+        private void drawYAxisLabels(Graphics2D g2, int height, double minProfit, double range, double scale) {
             int numYLabels = 5;
             for (int i = 0; i <= numYLabels; i++) {
                 double value = minProfit + (range * i / numYLabels);
                 int y = height + AXIS_PADDING - (int)((value - minProfit) * scale);
-                // Grid lines
+                
                 g2.setColor(new Color(220, 220, 220));
-                g2.drawLine(AXIS_PADDING, y, width + AXIS_PADDING, y);
-                // Labels
+                g2.drawLine(AXIS_PADDING, y, getWidth() - AXIS_PADDING, y);
+                
                 g2.setColor(Color.BLACK);
                 g2.drawString(df.format(value), 5, y + 5);
                 g2.drawLine(AXIS_PADDING - TICK_LENGTH, y, AXIS_PADDING, y);
             }
-    
-            // Draw profit line
-            g2.setStroke(new BasicStroke(2));
-            Path2D.Double path = new Path2D.Double();
-            boolean first = true;
-    
-            for (int i = 0; i < data.size(); i++) {
-                int x = AXIS_PADDING + (i * width / (data.size() - 1));
-                int y = height + AXIS_PADDING - (int)((data.get(i) - minProfit) * scale);
-                
-                if (first) {
-                    path.moveTo(x, y);
-                    first = false;
-                } else {
-                    path.lineTo(x, y);
-                }
-                
-                // Draw points
-                g2.setColor(Color.BLUE);
-                g2.fillOval(x - 3, y - 3, 6, 6);
-            }
-    
-            // Draw gradient under the line
-            GradientPaint gradient = new GradientPaint(
-                0, AXIS_PADDING, new Color(0, 150, 255, 50),
-                0, height + AXIS_PADDING, new Color(0, 150, 255, 10)
-            );
-            g2.setPaint(gradient);
-            path.lineTo(width + AXIS_PADDING, height + AXIS_PADDING);
-            path.lineTo(AXIS_PADDING, height + AXIS_PADDING);
-            path.closePath();
-            g2.fill(path);
-    
-            // Draw the line
-            g2.setColor(new Color(0, 120, 255));
-            g2.draw(path);
-    
-            // Draw time labels
-            int numXLabels = Math.min(data.size(), 5);
+        }
+
+        private void drawTimeLabels(Graphics2D g2, int width, int height) {
+            int numXLabels = 10; // Increased number of time labels
             for (int i = 0; i < numXLabels; i++) {
                 int x = AXIS_PADDING + (i * width / (numXLabels - 1));
                 g2.setColor(Color.BLACK);
+                int timePoint = (data.size() * i) / (numXLabels - 1);
                 g2.drawString(String.format("T-%d", numXLabels - i - 1), 
                              x - 10, height + AXIS_PADDING + 20);
                 g2.drawLine(x, height + AXIS_PADDING, x, height + AXIS_PADDING + TICK_LENGTH);
             }
         }
+
     }
     
 }

@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 import gui.MatchedOrdersGUI;
 
-public class MarketMakingStrategy implements Runnable {
+public class MarketMakingStrategy implements Runnable, TradingStrategy {
     private Exchange exchange;
     private int maxOrderSize;
     private double spreadFactor;
@@ -151,7 +151,9 @@ public class MarketMakingStrategy implements Runnable {
                         }
                         else {
                             totalBuy -= Math.abs((ord1Price * ord1Quantity));
-                        }                        
+                        }
+                        
+                        System.out.println("in match buy orders: " + ord1 + " " + ord2);
                     
                     }
 
@@ -169,12 +171,6 @@ public class MarketMakingStrategy implements Runnable {
                         int ord1Quantity = Integer.parseInt(ord1Params[3]);
                         int ord2Quantity = Integer.parseInt(ord2Params[3]);
                         
-                        //output.println("Order 1: " + ord1);
-                        //output.println("Order 2: " + ord2);
-                        //seeing that the matched orders are one between hft and one from orderbook
-                        //seeing that only one order has hftId and other doesn't
-                        
-                        
                         if (ord1Params[1].equals("sell")) {
                             totalSell += Math.abs((ord1Price * ord1Quantity));
                         }
@@ -182,12 +178,13 @@ public class MarketMakingStrategy implements Runnable {
                             totalSell += Math.abs((ord2Price * ord2Quantity));
                         }
                         
+                        System.out.println("in match sell orders: " + ord1 + " " + ord2);
                     }
 
                     this.profitMM = totalSell + totalBuy;
                     this.gui.addMatchedOrder(
-                    "",
-                    "",
+                    exchange.getHFTId() + " " + "buy" + " " + bidPrice + " " + orderSize,
+                    exchange.getHFTId() + " " +"sell" + " " + askPrice + " " + orderSize,
                     this.profitMM
                     );
                     output.println("Net profitMM: " + this.profitMM);

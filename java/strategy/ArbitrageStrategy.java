@@ -5,7 +5,7 @@ import exchange.Exchange;
 import rml.RiskManagement;
 import gui.MatchedOrdersGUI;
 
-public class ArbitrageStrategy implements Runnable {
+public class ArbitrageStrategy implements Runnable, TradingStrategy {
     private Exchange exchange1;
     private Exchange exchange2;
     // to simulate transaction cost that exchange charges for trade
@@ -117,18 +117,13 @@ public class ArbitrageStrategy implements Runnable {
                                 totalSell += Math.abs((ord2Price * ord2Quantity));
                             }
 
-                            this.gui.addMatchedOrder(
-                            ord1,
-                            ord2,
-                            this.profitArb
-                            );
                         }
 
                         this.profitArb = totalSell + totalBuy;
                         System.out.println("--------------------------------------------");
                         this.gui.addMatchedOrder(
-                        "",
-                        "",
+                        exchange2.getHFTId() + " " + "buy" + " " + bestAsk2 + " " + tradeSize,
+                        exchange1.getHFTId() + " " + "sell" + " " + bestBid1 + " " + tradeSize,
                         this.profitArb
                         );
                         System.out.println("total sell: " + totalSell  + "    total buy: " + totalBuy);
@@ -192,8 +187,8 @@ public class ArbitrageStrategy implements Runnable {
                         System.out.println("----------------------------------------");
                         this.profitArb = totalSell + totalBuy;
                         this.gui.addMatchedOrder(
-                        "",
-                        "",
+                        exchange1.getHFTId() + " " + "buy" + " " + bestAsk1 + " " + tradeSize,
+                        exchange2.getHFTId() + " " + "sell" + " " + bestBid2 + " " + tradeSize,
                         this.profitArb
                         );
                         System.out.println("total sell: " + totalSell  + "    total buy: " + totalBuy);
