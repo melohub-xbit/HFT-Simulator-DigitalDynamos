@@ -157,7 +157,7 @@ public class ArbitrageStrategy implements Runnable, TradingStrategy {
                                 totalbuy2 -= Math.abs((ord1Price * ord1Quantity));
                             }
                             
-                            this.gui.addMatchedOrder(ord1, ord2, totalbuy);
+                            this.gui.addMatchedOrder(ord1, ord2, totalbuy2);
                         }
                         
                         for (String[] s : lastSellOrders) {
@@ -175,16 +175,16 @@ public class ArbitrageStrategy implements Runnable, TradingStrategy {
                             
 
                             if (ord1Params[1].equals("sell")) {
-                                totalsell += Math.abs((ord1Price * ord1Quantity));
+                                totalsell2 += Math.abs((ord1Price * ord1Quantity));
                             }
                             else {
-                                totalsell += Math.abs((ord2Price * ord2Quantity));
+                                totalsell2 += Math.abs((ord2Price * ord2Quantity));
                             }
 
-                            this.gui.addMatchedOrder(ord1, ord2, totalsell);
+                            this.gui.addMatchedOrder(ord1, ord2, totalsell2);
                         }
                         
-                        this.profitArb += totalsell + totalbuy;
+                        this.profitArb += totalsell2 + totalbuy2;
                         System.out.println("----------------------------------------");
                         rm.updatePnL(predictedProfit * tradeSize);
                     }
