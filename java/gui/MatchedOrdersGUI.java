@@ -11,6 +11,7 @@ import java.util.concurrent.Executors;
 import java.awt.geom.Path2D;
 
 import javax.swing.*;
+import javax.swing.border.TitledBorder;
 
 public class MatchedOrdersGUI {
     private JFrame frame;
@@ -28,7 +29,15 @@ public class MatchedOrdersGUI {
     private Queue<String> sellQueue = new LinkedList<>();
     private GraphPanel graphPanel;
     private List<Double> prices = new ArrayList<>();
-    private static final int MAX_GRAPH_POINTS = 50;
+    private static final int MAX_GRAPH_POINTS = 30;
+    private final Color DARK_BG = new Color(43, 43, 43);
+    private final Color DARK_TEXT = Color.WHITE;
+    private final Color DARK_BUY_BG = new Color(0, 51, 102);
+    private final Color DARK_SELL_BG = new Color(102, 0, 51);
+    private final Color DARK_BUTTON_BG = new Color(60, 60, 60);
+    private final Color RED_COLOR = new Color(255, 0, 0);
+    private final Color GREEN_COLOR = new Color(0, 255, 0);
+
 
     public MatchedOrdersGUI() {
         createGUI();
@@ -42,7 +51,7 @@ public class MatchedOrdersGUI {
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BorderLayout(10, 10));
         mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        mainPanel.setBackground(new Color(245, 245, 245));
+        mainPanel.setBackground(DARK_BG);
     
         // Create split pane for logs with continuous layout
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
@@ -52,26 +61,34 @@ public class MatchedOrdersGUI {
         // Left panel for buy orders with size constraints
         leftOrdersLog = new JTextArea();
         leftOrdersLog.setEditable(false);
-        leftOrdersLog.setBackground(new Color(240, 248, 255));
-        leftOrdersLog.setForeground(new Color(0, 102, 204));
+        leftOrdersLog.setBackground(Color.BLACK);
+        leftOrdersLog.setForeground(RED_COLOR);
         leftOrdersLog.setFont(new Font("Consolas", Font.PLAIN, 14));
         JScrollPane leftScrollPane = new JScrollPane(leftOrdersLog);
         leftScrollPane.setBorder(BorderFactory.createTitledBorder(
-            BorderFactory.createLineBorder(new Color(0, 102, 204)), 
-            "Buy Orders"
+            BorderFactory.createLineBorder(DARK_TEXT),
+            "Buy Orders",
+            TitledBorder.DEFAULT_JUSTIFICATION,
+            TitledBorder.DEFAULT_POSITION,
+            null,
+            DARK_TEXT
         ));
         leftScrollPane.setMinimumSize(new Dimension(200, 400));
     
         // Right panel for sell orders with size constraints
         rightOrdersLog = new JTextArea();
         rightOrdersLog.setEditable(false);
-        rightOrdersLog.setBackground(new Color(255, 240, 245));
-        rightOrdersLog.setForeground(new Color(204, 0, 51));
+        rightOrdersLog.setBackground(Color.BLACK);
+        rightOrdersLog.setForeground(GREEN_COLOR);
         rightOrdersLog.setFont(new Font("Consolas", Font.PLAIN, 14));
         JScrollPane rightScrollPane = new JScrollPane(rightOrdersLog);
         rightScrollPane.setBorder(BorderFactory.createTitledBorder(
-            BorderFactory.createLineBorder(new Color(204, 0, 51)), 
-            "Sell Orders"
+            BorderFactory.createLineBorder(DARK_TEXT),
+            "Sell Orders",
+            TitledBorder.DEFAULT_JUSTIFICATION,
+            TitledBorder.DEFAULT_POSITION,
+            null,
+            DARK_TEXT
         ));
         rightScrollPane.setMinimumSize(new Dimension(200, 400));
     
@@ -127,16 +144,16 @@ public class MatchedOrdersGUI {
     
         totalProfitLabel = new JLabel("Total Profit: Rs0.00", SwingConstants.CENTER);
         totalProfitLabel.setFont(new Font("Arial", Font.BOLD, 20));
-        totalProfitLabel.setForeground(new Color(34, 139, 34));
+        totalProfitLabel.setBackground(Color.darkGray);
+        totalProfitLabel.setForeground(Color.WHITE);
         totalProfitLabel.setOpaque(true);
-        totalProfitLabel.setBackground(new Color(240, 255, 240));
         totalProfitLabel.setBorder(BorderFactory.createCompoundBorder(
             BorderFactory.createLineBorder(new Color(34, 139, 34)),
             BorderFactory.createEmptyBorder(5, 5, 5, 5)
         ));
     
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
-        buttonPanel.setBackground(new Color(245, 245, 245));
+        buttonPanel.setBackground(DARK_BG);
     
         startButton = new JButton("Start Monitoring");
         stopButton = new JButton("Stop Monitoring");
@@ -150,8 +167,11 @@ public class MatchedOrdersGUI {
         });
         buttonPanel.add(exitButton);
 
-        startButton.setBackground(new Color(144, 238, 144));
-        stopButton.setBackground(new Color(255, 99, 71));
+        
+        startButton.setBackground(DARK_BUTTON_BG);
+        startButton.setForeground(DARK_TEXT);
+        stopButton.setBackground(DARK_BUTTON_BG);
+        stopButton.setForeground(DARK_TEXT);
         stopButton.setEnabled(false);
     
         startButton.addActionListener(e -> startMonitoring());
@@ -193,6 +213,7 @@ public class MatchedOrdersGUI {
             leftOrdersLog.setText(String.join("", buyQueue));
             rightOrdersLog.setText(String.join("", sellQueue));
             totalProfitLabel.setText("Total Profit: Rs " + df.format(totalProfit));
+            
         });
     }
 

@@ -28,7 +28,7 @@ public class RandomOrderGeneration implements Runnable {
             String type = random.nextBoolean() ? "buy" : "sell";
 
             // Generate a random price between 200 and 1199
-            double price = 500 + Math.round(random.nextDouble() * 2 * 100.0) / 100.0;
+            double price = 500 + Math.round(random.nextDouble() * 5 * 100.0) / 100.0;
 
             // Generate a random quantity between 1 and 500
             int quantity = 1 + random.nextInt(500);
