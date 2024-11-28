@@ -3,6 +3,7 @@ import rml.RiskManagement;
 import strategy.ArbitrageStrategy;
 import strategy.MarketMakingStrategy;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.ExecutorService;
 import java.io.PrintStream;
 import java.io.FileOutputStream;
@@ -47,6 +48,11 @@ public class HFTSimulation {
             executor.submit(mms);
             executor.submit(abs);
 
+            try {
+                executor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
             executor.shutdown();
 
             // Add shutdown hook to close files

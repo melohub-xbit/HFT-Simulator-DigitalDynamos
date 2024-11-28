@@ -35,19 +35,20 @@ public class MatchedOrdersGUI {
     private void createGUI() {
         frame = new JFrame("Matched Orders Monitor");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(1200, 800);
-
+        frame.setMinimumSize(new Dimension(800, 600));  // Set minimum size
+        frame.setPreferredSize(new Dimension(1200, 800));
+    
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BorderLayout(10, 10));
         mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         mainPanel.setBackground(new Color(245, 245, 245));
-
-        // Create main split pane
-        JSplitPane mainSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-        mainSplitPane.setResizeWeight(0.3);
-
-        // Left panel with buy orders
-        JPanel leftPanel = new JPanel(new BorderLayout());
+    
+        // Create split pane for logs with continuous layout
+        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+        splitPane.setResizeWeight(0.5);
+        splitPane.setContinuousLayout(true);
+    
+        // Left panel for buy orders with size constraints
         leftOrdersLog = new JTextArea();
         leftOrdersLog.setEditable(false);
         leftOrdersLog.setBackground(new Color(240, 248, 255));
@@ -55,31 +56,12 @@ public class MatchedOrdersGUI {
         leftOrdersLog.setFont(new Font("Consolas", Font.PLAIN, 14));
         JScrollPane leftScrollPane = new JScrollPane(leftOrdersLog);
         leftScrollPane.setBorder(BorderFactory.createTitledBorder(
-            BorderFactory.createLineBorder(new Color(0, 102, 204)),
+            BorderFactory.createLineBorder(new Color(0, 102, 204)), 
             "Buy Orders"
         ));
-        leftPanel.add(leftScrollPane, BorderLayout.CENTER);
-
-        // Right split pane for graph and sell orders
-        JSplitPane rightSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-        rightSplitPane.setResizeWeight(0.7);
-
-        // Center graph panel
-        prices.add(100.0);
-        prices.add(105.0);
-        prices.add(103.0);
-        prices.add(107.0);
-        prices.add(104.0);
-        graphPanel = new GraphPanel(prices);
-        JPanel graphContainer = new JPanel(new BorderLayout());
-        graphContainer.setBorder(BorderFactory.createTitledBorder(
-            BorderFactory.createLineBorder(new Color(100, 100, 100)),
-            "Profit Timeline"
-        ));
-        graphContainer.add(graphPanel, BorderLayout.CENTER);
-
-        // Right panel with sell orders
-        JPanel rightPanel = new JPanel(new BorderLayout());
+        leftScrollPane.setMinimumSize(new Dimension(200, 400));
+    
+        // Right panel for sell orders with size constraints
         rightOrdersLog = new JTextArea();
         rightOrdersLog.setEditable(false);
         rightOrdersLog.setBackground(new Color(255, 240, 245));
@@ -87,24 +69,61 @@ public class MatchedOrdersGUI {
         rightOrdersLog.setFont(new Font("Consolas", Font.PLAIN, 14));
         JScrollPane rightScrollPane = new JScrollPane(rightOrdersLog);
         rightScrollPane.setBorder(BorderFactory.createTitledBorder(
-            BorderFactory.createLineBorder(new Color(204, 0, 51)),
+            BorderFactory.createLineBorder(new Color(204, 0, 51)), 
             "Sell Orders"
         ));
-        rightPanel.add(rightScrollPane, BorderLayout.CENTER);
-
-        // Combine panels
-        rightSplitPane.setLeftComponent(graphContainer);
-        rightSplitPane.setRightComponent(rightPanel);
-        mainSplitPane.setLeftComponent(leftPanel);
-        mainSplitPane.setRightComponent(rightSplitPane);
-
-        mainPanel.add(mainSplitPane, BorderLayout.CENTER);
-
-        // Profit Panel
+        rightScrollPane.setMinimumSize(new Dimension(200, 400));
+    
+        splitPane.setLeftComponent(leftScrollPane);
+        splitPane.setRightComponent(rightScrollPane);
+    
+        // Create layered pane with proportional layout
+        JLayeredPane layeredPane = new JLayeredPane() {
+            @Override
+            public void doLayout() {
+                // Make split pane fill the entire space
+                splitPane.setBounds(0, 0, getWidth(), getHeight());
+                
+                // Calculate graph size proportionally
+                int graphWidth = Math.min(400, getWidth() / 3);
+                int graphHeight = Math.min(300, getHeight() / 3);
+                
+                // Center the graph
+                graphPanel.setBounds(
+                    (getWidth() - graphWidth) / 2,
+                    (getHeight() - graphHeight) / 2 - 50,
+                    graphWidth,
+                    graphHeight
+                );
+            }
+        };
+        layeredPane.setLayout(null);
+    
+        // Add split pane to base layer
+        layeredPane.add(splitPane, JLayeredPane.DEFAULT_LAYER);
+    
+        // Initialize and add graph panel
+        prices.add(100.0);
+        prices.add(105.0);
+        prices.add(103.0);
+        prices.add(107.0);
+        prices.add(104.0);
+    
+        graphPanel = new GraphPanel(prices);
+        graphPanel.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(new Color(100, 100, 100), 2),
+            BorderFactory.createEmptyBorder(5, 5, 5, 5)
+        ));
+        graphPanel.setBackground(new Color(255, 255, 255, 240));
+        layeredPane.add(graphPanel, JLayeredPane.PALETTE_LAYER);
+    
+        mainPanel.add(layeredPane, BorderLayout.CENTER);
+    
+        // Bottom panel with dynamic sizing
         JPanel bottomPanel = new JPanel();
         bottomPanel.setLayout(new BorderLayout(10, 10));
         bottomPanel.setBackground(new Color(245, 245, 245));
-
+    
         totalProfitLabel = new JLabel("Total Profit: Rs0.00", SwingConstants.CENTER);
         totalProfitLabel.setFont(new Font("Arial", Font.BOLD, 20));
         totalProfitLabel.setForeground(new Color(34, 139, 34));
@@ -114,32 +133,32 @@ public class MatchedOrdersGUI {
             BorderFactory.createLineBorder(new Color(34, 139, 34)),
             BorderFactory.createEmptyBorder(5, 5, 5, 5)
         ));
-
-        // Control Panel
-        JPanel buttonPanel = new JPanel(new FlowLayout());
+    
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
         buttonPanel.setBackground(new Color(245, 245, 245));
-
+    
         startButton = new JButton("Start Monitoring");
         stopButton = new JButton("Stop Monitoring");
         startButton.setBackground(new Color(144, 238, 144));
         stopButton.setBackground(new Color(255, 99, 71));
         stopButton.setEnabled(false);
-
+    
         startButton.addActionListener(e -> startMonitoring());
         stopButton.addActionListener(e -> stopMonitoring());
-
+    
         buttonPanel.add(startButton);
         buttonPanel.add(stopButton);
-
+    
         bottomPanel.add(totalProfitLabel, BorderLayout.NORTH);
         bottomPanel.add(buttonPanel, BorderLayout.CENTER);
-
+    
         mainPanel.add(bottomPanel, BorderLayout.SOUTH);
-
+    
         frame.add(mainPanel);
+        frame.pack();
         frame.setVisible(true);
     }
-    
+
     public void addMatchedOrder(String buyOrder, String sellOrder, double profit) {
         if (!isRunning) return;
 
