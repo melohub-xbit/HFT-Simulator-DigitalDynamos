@@ -5,7 +5,7 @@ import exchange.Exchange;
 import rml.RiskManagement;
 import gui.MatchedOrdersGUI;
 
-public class ArbitrageStrategy implements Runnable {
+public class ArbitrageStrategy extends TradingStrategy {
     private Exchange exchange1;
     private Exchange exchange2;
     // to simulate transaction cost that exchange charges for trade
@@ -20,14 +20,12 @@ public class ArbitrageStrategy implements Runnable {
     private MatchedOrdersGUI gui;
 
     public ArbitrageStrategy(Exchange e1, Exchange e2, double transactionCost, int tradeSize, RiskManagement rm, PrintStream output, MatchedOrdersGUI gui) {
+        super(rm, output, gui);
         this.exchange1 = e1;
         this.exchange2 = e2;
         this.transactionCost = transactionCost;
         this.tradeSize = tradeSize;
-        this.rm = rm;
         this.profitArb = 0;
-        this.output = output;
-        this.gui = gui;
     }
 
     public String[][] getLastBuyOrders() {
