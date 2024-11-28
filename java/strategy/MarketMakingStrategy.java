@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 import gui.MatchedOrdersGUI;
 
-public class MarketMakingStrategy implements Runnable {
+public class MarketMakingStrategy extends TradingStrategy {
     private Exchange exchange;
     private int maxOrderSize;
     private double spreadFactor;
@@ -18,13 +18,11 @@ public class MarketMakingStrategy implements Runnable {
     private MatchedOrdersGUI gui;
 
     public MarketMakingStrategy(Exchange exchange, int maxOrderSize, double spreadFactor, RiskManagement rm, PrintStream output, MatchedOrdersGUI gui) {
+        super(rm, output, gui);
         this.exchange = exchange;
         this.maxOrderSize = maxOrderSize;
         this.spreadFactor = spreadFactor;
-        this.rm = rm;
         this.profitMM = 0;
-        this.output = output;
-        this.gui = gui;
     }
 
 
