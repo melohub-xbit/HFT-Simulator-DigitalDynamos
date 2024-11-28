@@ -124,8 +124,9 @@ public class MarketMakingStrategy implements Runnable, TradingStrategy {
                     lastBuyOrders = exchange.getOrderBook().matchBuyOrder(exchange.getHFTId(),"buy",bidPrice,orderSize); // place buy order
                     lastSellOrders = exchange.getOrderBook().matchSellOrder(exchange.getHFTId(),"sell",askPrice,orderSize); // place sell order
 
-                    double totalBuy = 0;
                     //net profitMM from all the matched orders
+                    double totalbuy = 0;
+                    double totalsell = 0;
                     for (String[] s : lastBuyOrders) {
                         String ord1 = s[0];
                         String ord2 = s[1];
@@ -147,17 +148,15 @@ public class MarketMakingStrategy implements Runnable, TradingStrategy {
                         
 
                         if (ord1Params[1].equals("sell")) {
-                            totalBuy -= Math.abs((ord2Price * ord2Quantity));
+                            totalbuy -= Math.abs((ord2Price * ord2Quantity));
                         }
                         else {
-                            totalBuy -= Math.abs((ord1Price * ord1Quantity));
+                            totalbuy -= Math.abs((ord1Price * ord1Quantity));
                         }
                         
-                        System.out.println("in match buy orders: " + ord1 + " " + ord2);
-                    
+                        this.gui.addMatchedOrder(ord1, ord2, totalbuy);
                     }
 
-                    double totalSell = 0;
                     for (String[] s : lastSellOrders) {
                         String ord1 = s[0];
                         String ord2 = s[1];
@@ -172,24 +171,17 @@ public class MarketMakingStrategy implements Runnable, TradingStrategy {
                         int ord2Quantity = Integer.parseInt(ord2Params[3]);
                         
                         if (ord1Params[1].equals("sell")) {
-                            totalSell += Math.abs((ord1Price * ord1Quantity));
+                            totalsell += Math.abs((ord1Price * ord1Quantity));
                         }
                         else {
-                            totalSell += Math.abs((ord2Price * ord2Quantity));
+                            totalsell += Math.abs((ord2Price * ord2Quantity));
                         }
+
+                        this.gui.addMatchedOrder(ord1, ord2, totalsell);
                         
-                        System.out.println("in match sell orders: " + ord1 + " " + ord2);
                     }
 
-                    this.profitMM = totalSell + totalBuy;
-                    this.gui.addMatchedOrder(
-                    exchange.getHFTId() + " " + "buy" + " " + bidPrice + " " + orderSize,
-                    exchange.getHFTId() + " " +"sell" + " " + askPrice + " " + orderSize,
-                    this.profitMM
-                    );
-                    output.println("Net profitMM: " + this.profitMM);
-                    System.out.println("####################################");
-                    System.out.println("total sell: " + totalSell + " total buy: " + totalBuy);
+                    this.profitMM = totalsell + totalbuy;
                     rm.updatePnL((askPrice - bidPrice) * orderSize);
                     output.println("Placed orders: Buy at " + bidPrice + ", Sell at " + askPrice);
                 } else {
