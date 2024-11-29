@@ -92,6 +92,14 @@ As the market prices change the system adjusts these orders to stay close to the
 echo '
 ## Instructions to Run
 
+##### The zip file contains the pre-compiled Java and C++ files, so in order to run the program, just run the following commands from the project root directory (after extracting the zip file, in the root directory of the project):
+```cd java```
+---
+```java -Djava.library.path=. HFTSimulation```
+---
+
+##### If any changes are made, then follow the instructions below to run it again:
+
 ### Linux/MacOS Systems:
 1. From the project root directory, run:
 ```g++ -I"$JAVA_HOME/include" -I"$JAVA_HOME/include/darwin" -shared -o libOrderBookNative.dylib cpp/jni/OrderBookNative.cpp cpp/core/OrderBook.cpp cpp/core/AVLTree.cpp cpp/core/Order.cpp```
@@ -124,5 +132,9 @@ echo '
 6. Run the program:
 ```cd ..```
 ```java -Djava.library.path="{your_path_to_root_directory_of_project}" -cp java HFTSimulation```
+
+#### OR
+In java directory:
+```java -Djava.library.path=. HFTSimulation```
 
 Note: Replace the Java paths and versions according to your system configuration.
