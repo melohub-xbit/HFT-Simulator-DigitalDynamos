@@ -12,12 +12,12 @@
 ### Team name: DigitalDynamos
 
 ### Team Members:
-- [Ramya Parsania](https://github.com/RAMYA-PARSANIA)
-- [Chaitya Shah](https://github.com/CShah44)
-- [V Krishna Sai](https://github.com/melohub-xbit/)
-- [Hitanshu Seth](https://github.com/Hitanshu078)
 - [Aaryan Antala](https://github.com/AaryanAntala)
+- [Chaitya Shah](https://github.com/CShah44)
+- [Hitanshu Seth](https://github.com/Hitanshu078)
+- [Ramya Parsania](https://github.com/RAMYA-PARSANIA)
 - [Satyam Ambi](https://github.com/Satyam137)
+- [V Krishna Sai](https://github.com/melohub-xbit/)
 ## Project Overview:
 This project aims to simulate how an HFT (High-Frequency Trading) firm executes its strategies to profit through the stock exchanges. The project also simulates how a stock exchange manages its order book to match and execute orders efficiently using advanced data structures and algorithms to minimize the latency.
 
