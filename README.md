@@ -93,12 +93,12 @@ echo '
 ## Instructions to Run
 
 ##### The zip file contains the pre-compiled Java and C++ files, so in order to run the program, just run the following commands from the project root directory (after extracting the zip file, in the root directory of the project):
-```cd java```
----
-```java -Djava.library.path=. HFTSimulation```
+```java -Djava.library.path="{your_path_to_root_directory_of_project}" -cp java HFTSimulation```
 ---
 
-##### If any changes are made, then follow the instructions below to run it again:
+##### ```replace the {your_path_to_root_directory_of_project} with the path to the root directory of the project```
+
+##### If any changes are made or the above instructions don't work, please follow the instructions below to run the application:
 
 ### Linux/MacOS Systems:
 1. From the project root directory, run:
