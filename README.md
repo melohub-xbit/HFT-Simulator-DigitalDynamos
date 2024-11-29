@@ -70,3 +70,6 @@ Stock exchange A lists a stock at â‚¹10.50, and exchange B lists the stock at â‚
 ### Market Making: 
 - The HFT places a buy order slightly below the current market price and places a sell order slightly above the current market price.
 As the market prices change the system adjusts these orders to stay close to the market prices and then logs all executed trades.
+
+## Instructions to run:
+- Check the instructions specified the srs document present in the repo to run the project
