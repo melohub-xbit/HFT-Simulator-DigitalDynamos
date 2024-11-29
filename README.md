@@ -138,3 +138,4 @@ In java directory:
 ```java -Djava.library.path=. HFTSimulation```
 
 Note: Replace the Java paths and versions according to your system configuration.
+Also, the documentation for the project is also present in the repository.
